@@ -5,7 +5,7 @@ import SimpleConstraintGroupingSelector from '../SimpleConstraintGroupingSelecto
 
 import './DatasetSelector.css';
 import { flow, fromPairs, pick, map, uniq } from 'lodash/fp';
-import { mapWithKey } from '../../../../../src/lib/utils/fp';
+import { mapWithKey } from '../../../utils/fp';
 
 
 export default class DatasetSelector extends Component {

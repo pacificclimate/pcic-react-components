@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import SimpleConstraintGroupingSelector from '../SimpleConstraintGroupingSelector/SimpleConstraintGroupingSelector';
 import './DatasetSelector.css';
 import { flow, fromPairs, pick, map, uniq } from 'lodash/fp';
-import { mapWithKey } from '../../../../../src/lib/utils/fp';
+import { mapWithKey } from '../../../utils/fp';
 
 var DatasetSelector =
 /*#__PURE__*/
