@@ -1,0 +1,6 @@
+{
+  "name": "SimpleConstraintGroupingSelector",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SimpleConstraintGroupingSelector.js"
+}
