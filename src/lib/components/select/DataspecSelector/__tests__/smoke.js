@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Template from '../DatasetSelector';
+import Template from '../';
 import { noop } from 'underscore';
 
 it('renders without crashing', () => {

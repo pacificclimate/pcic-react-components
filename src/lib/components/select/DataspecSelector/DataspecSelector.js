@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import SimpleConstraintGroupingSelector from '../SimpleConstraintGroupingSelector/SimpleConstraintGroupingSelector';
+import SimpleConstraintGroupingSelector from '../SimpleConstraintGroupingSelector';
 
-import './DatasetSelector.css';
+import './DataspecSelector.css';
 import { flow, fromPairs, pick, map, uniq } from 'lodash/fp';
 import { mapWithKey } from '../../../utils/fp';
 
 
-export default class DatasetSelector extends Component {
+export default class DataspecSelector extends Component {
   static propTypes = {
     constraint: PropTypes.object,
   };
@@ -16,7 +16,7 @@ export default class DatasetSelector extends Component {
   static valueProps =
     'start_date end_date ensemble_member'.split(' ');
   static getOptionValue = metadatum =>
-    pick(DatasetSelector.valueProps, metadatum);
+    pick(DataspecSelector.valueProps, metadatum);
 
   // Return an object mapping `ensemble_member` (r-i-p) values to more
   // user-friendly 'Run <n>' values. For the current collection of datasets,
@@ -34,18 +34,17 @@ export default class DatasetSelector extends Component {
   // Return an option label including the user-friendly 'Run <n>' names
   // for ensemble_member values.
   getOptionLabel = ({ value: { start_date, end_date, ensemble_member }}) => {
-    const eMT = DatasetSelector.ensembleMemberTranslation(this.props.bases);
+    const eMT = DataspecSelector.ensembleMemberTranslation(this.props.bases);
     return `${eMT[ensemble_member]} (${ensemble_member}), ${start_date}–${end_date}`;
   };
   
   render() {
-    console.log('DatasetSelector.render')
     return (
       <SimpleConstraintGroupingSelector
         {...this.props}
-        getOptionValue={DatasetSelector.getOptionValue}
+        getOptionValue={DataspecSelector.getOptionValue}
         getOptionLabel={this.getOptionLabel}
-        debugValue='Dataset'
+        debugValue='Dataspec'
       />
     );
   }
