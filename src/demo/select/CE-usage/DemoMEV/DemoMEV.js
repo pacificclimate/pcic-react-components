@@ -13,7 +13,7 @@ import './DemoMEV.css';
 import VariableSelector from '../../../../lib/components/select/VariableSelector';
 import ModelSelector from '../../../../lib/components/select/ModelSelector';
 import EmissionsScenarioSelector from '../../../../lib/components/select/EmissionsScenarioSelector';
-import DatasetSelector from '../../../../lib/components/select/DatasetSelector';
+import DatasetSelector from '../../../../lib/components/select/DataspecSelector';
 
 
 function stringify(obj) {
@@ -153,7 +153,22 @@ class DemoMEV extends Component {
     return (
       <Grid fluid>
         <Row>
-          <Col lg={12} md={12} sm={12}><h1>Model, Emissions, Variable selectors</h1></Col>
+          <Col lg={12} md={12} sm={12}>
+            <p>{`
+              The Model, Emissions, and Scenario selectors below are
+              "cascaded": For any given selector, the selections
+              in all preceding selectors determines which options are
+              enabled. An option is enabled if there is at least one
+              metadata item that it would select in combination with
+              the preceding selections.
+            `}</p>
+            <p>{`
+              The order of theModel, Emissions, and Variable selectors
+              can be changed dynamically (with consequent changed to the
+              cascading. Click an arrow beside any selector label to
+              change its position in the cascade (and in the UI).
+            `}</p>
+          </Col>
         </Row>
         <Row>
             {
@@ -205,7 +220,13 @@ class DemoMEV extends Component {
         </Row>
 
         <Row>
-          <Col lg={12} md={12} sm={12}><h1>Dataset selector</h1></Col>
+          <Col lg={12} md={12} sm={12}>
+            <p>{`
+              The Dataspec selector shows only options that are valid (i.e.,
+              actually select something) in combination with the Model,
+              Emissions, and Variable selections above.
+            `}</p>
+          </Col>
         </Row>
 
         <Row>
