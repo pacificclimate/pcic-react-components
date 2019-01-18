@@ -1,6 +1,3 @@
-// TODO: Remove this dummy export (left over from initial testing)
-export { default as TextInput } from './components/dummy/TextInput/TextInput';
-
 // Selector components
 export { default as DatasetSelector }
   from './components/select/DataspecSelector';
