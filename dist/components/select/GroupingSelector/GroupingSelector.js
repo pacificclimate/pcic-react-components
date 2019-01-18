@@ -65,7 +65,7 @@ import _inherits from "@babel/runtime/helpers/esm/inherits";
 import React from 'react';
 import Select from 'react-select';
 import memoize from 'memoize-one';
-import { assign, flow, constant, identity, map, flatMap, find, sortBy, some, tap, isEqual, isArray, isFunction, noop } from 'lodash/fp';
+import { assign, flow, constant, identity, map, flatMap, find, sortBy, some, tap, isEqual, isArray, isFunction, noop, keys, concat, omit } from 'lodash/fp';
 import { groupByGeneral } from '../../../utils/fp';
 import objectId from '../../../debug-utils/object-id';
 import './GroupingSelector.css';
@@ -77,6 +77,7 @@ function (_React$Component) {
 
   _createClass(GroupingSelector, [{
     key: "log",
+    // All props not named here are passed through to the rendered component.
     value: function log() {
       if (this.props.debug) {
         var _console;
@@ -210,29 +211,31 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      this.log(".render"); // TODO: Pass through all the Select props.
-
+      // Generate options for React Select v2 component.
       this.log(".render: arrangedOptions: meta:", objectId(this.props.bases), this.props.bases);
       var arrangedOptions = this.props.arrangeOptions(this.constrainedOptions(this.props.getOptionIsDisabled, this.props.bases));
-      this.log(".render: arrangedOptions: result:", arrangedOptions); // The following two values are picked up in `componentDidMount` and
-      // `componentDidUpdate` to call back (`onChange`) with the replaced value.
-      // React lifecycle prevents doing that here, because it ultimately causes
-      // a state change in the parent's render, which is forbidden.
+      this.log(".render: arrangedOptions: result:", arrangedOptions); // Replace an invalid value.
+      //
+      // The following two instance properties are picked up in lifecycle hooks
+      // `componentDidMount` and `componentDidUpdate`, which call back
+      // (via `onChange`) as needed with the replaced value.
+      // We cannot call back here, because the React lifecycle requires
+      // `render` to be a pure (i.e., without side effects) function.
 
       this.willReplaceValue = isFunction(this.props.replaceInvalidValue) && !this.isValidValue(this.props.value);
       this.valueToUse = this.willReplaceValue ? this.props.replaceInvalidValue(arrangedOptions) : this.props.value;
-      this.log(".render: return");
-      return React.createElement(Select, Object.assign({}, this.props, {
+      return React.createElement(Select, Object.assign({
         options: arrangedOptions,
         value: this.optionFor(this.valueToUse),
         onChange: this.handleChange
-      }));
+      }, omit(GroupingSelector.propsToOmit, this.props)));
     }
   }]);
 
   return GroupingSelector;
 }(React.Component);
 
+GroupingSelector.propsToOmit = concat(keys(GroupingSelector.propTypes), 'options', 'value', 'onChange');
 GroupingSelector.defaultProps = {
   getOptionLabel: function getOptionLabel(option) {
     return option.value.toString();

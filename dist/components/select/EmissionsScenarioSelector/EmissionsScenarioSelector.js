@@ -25,14 +25,16 @@ function (_Component) {
       return React.createElement(SimpleConstraintGroupingSelector, Object.assign({
         getOptionValue: EmissionsScenarioSelector.getOptionValue,
         getOptionLabel: EmissionsScenarioSelector.getOptionLabel
-      }, this.props, {
-        debugValue: "Emissions"
-      }));
+      }, this.props));
     }
   }]);
 
   return EmissionsScenarioSelector;
 }(Component);
+
+EmissionsScenarioSelector.defaultProps = {
+  debugValue: 'Emissions'
+};
 
 EmissionsScenarioSelector.getOptionValue = function (metadatum) {
   return metadatum.experiment;

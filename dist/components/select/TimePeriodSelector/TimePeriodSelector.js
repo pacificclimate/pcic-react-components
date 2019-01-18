@@ -22,17 +22,19 @@ function (_Component) {
   _createClass(TimePeriodSelector, [{
     key: "render",
     value: function render() {
-      return React.createElement(SimpleConstraintGroupingSelector, Object.assign({}, this.props, {
+      return React.createElement(SimpleConstraintGroupingSelector, Object.assign({
         getOptionValue: TimePeriodSelector.getOptionValue,
-        getOptionLabel: TimePeriodSelector.getOptionLabel,
-        debugValue: "TimePeriod"
-      }));
+        getOptionLabel: TimePeriodSelector.getOptionLabel
+      }, this.props));
     }
   }]);
 
   return TimePeriodSelector;
 }(Component);
 
+TimePeriodSelector.defaultProps = {
+  debugValue: 'TimePeriod'
+};
 TimePeriodSelector.valueProps = 'start_date end_date'.split(' ');
 
 TimePeriodSelector.getOptionValue = function (metadatum) {

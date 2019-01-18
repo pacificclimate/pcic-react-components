@@ -23,15 +23,16 @@ function (_Component) {
     value: function render() {
       return React.createElement(SimpleConstraintGroupingSelector, Object.assign({
         getOptionValue: ModelSelector.getOptionValue
-      }, this.props, {
-        debug: false,
-        debugValue: "Model"
-      }));
+      }, this.props));
     }
   }]);
 
   return ModelSelector;
 }(Component);
+
+ModelSelector.defaultProps = {
+  debugValue: 'Model'
+};
 
 ModelSelector.getOptionValue = function (metadatum) {
   return metadatum.model_id;

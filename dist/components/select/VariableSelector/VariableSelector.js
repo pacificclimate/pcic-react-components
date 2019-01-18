@@ -26,24 +26,22 @@ function (_Component) {
     key: "render",
     value: function render() {
       return React.createElement(SimpleConstraintGroupingSelector, Object.assign({
-        isSearchable: true,
-        placeholder: 'Type here to search list...',
         getOptionValue: VariableSelector.getOptionValue,
         getOptionLabel: VariableSelector.getOptionLabel,
         arrangeOptions: VariableSelector.arrangeOptions,
         components: {
           Option: VariableSelector.Option
         }
-      }, this.props, {
-        debug: false,
-        debugValue: "Variable"
-      }));
+      }, this.props));
     }
   }]);
 
   return VariableSelector;
 }(Component);
 
+VariableSelector.defaultProps = {
+  debugValue: 'Variable'
+};
 VariableSelector.valueProps = 'variable_id variable_name multi_year_mean'.split(' ');
 
 VariableSelector.getOptionValue = function (metadatum) {

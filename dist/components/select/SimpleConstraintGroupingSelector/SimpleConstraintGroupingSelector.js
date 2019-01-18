@@ -5,7 +5,7 @@ import _getPrototypeOf from "@babel/runtime/helpers/esm/getPrototypeOf";
 import _inherits from "@babel/runtime/helpers/esm/inherits";
 import React from 'react';
 import './SimpleConstraintGroupingSelector.css';
-import { isMatch, some, omit } from 'lodash/fp';
+import { isMatch, some, omit, concat, keys } from 'lodash/fp';
 import memoize from 'memoize-one';
 import MetadataSelector from '../GroupingSelector';
 
@@ -56,11 +56,12 @@ function (_React$Component) {
     value: function render() {
       return React.createElement(MetadataSelector, Object.assign({
         getOptionIsDisabled: this.makeGetOptionIsDisabled(this.props.constraint)
-      }, omit('constraint', this.props)));
+      }, omit(SimpleConstraintGroupingSelector.propsToOmit, this.props)));
     }
   }]);
 
   return SimpleConstraintGroupingSelector;
 }(React.Component);
 
+SimpleConstraintGroupingSelector.propsToOmit = ['getOptionIsDisabled', 'constraint'];
 export { SimpleConstraintGroupingSelector as default };
