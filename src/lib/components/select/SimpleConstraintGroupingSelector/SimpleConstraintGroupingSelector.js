@@ -2,16 +2,56 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import './SimpleConstraintGroupingSelector.css';
-import { isMatch, some, omit } from 'lodash/fp';
+import { isMatch, some, omit, concat, keys } from 'lodash/fp';
 import memoize from 'memoize-one';
 import MetadataSelector from '../GroupingSelector';
 
 
 export default class SimpleConstraintGroupingSelector extends React.Component {
   static propTypes = {
+    bases: PropTypes.array.isRequired,
+    // List of basis items the selector will build its options from.
+
+    getOptionValue: PropTypes.func.isRequired,
+    // Maps a basis item to the `value` property of an option.
+    // This function can map many basis items to the same value;
+    // GroupingSelector collects all basis items with the same
+    // value into a single option.
+
+    getOptionLabel: PropTypes.func,
+    // Maps an option to the label (a string) for that option.
+
     constraint: PropTypes.object,
+    // Any option that does not have a context that matches this value
+    // is disabled. Replaces prop getOptionIsDisabled' in `GroupingSelector`.
+
+    arrangeOptions: PropTypes.func,
+    // Arranges options for consumption by Select.
+    // This may mean sorting options, grouping options (as provided for
+    // by Select), or any other operation(s) that arrange the options
+    // for presentation in Select.
+
+    value: PropTypes.any,
+    // The currently selected option.
+
+    onChange: PropTypes.func,
+    // Called when a different option is selected.
+
+    replaceInvalidValue: PropTypes.func,
+    // Called when value passed in is not a valid value.
+    // Called with list of all options.
+    // Must return a valid value.
+    // Beware: If you always return an invalid value from this, you're screwed.
+
+    debug: PropTypes.bool,
     debugValue: PropTypes.any,
+    // For debugging, what else?
+
+    // Only props key to this compoonent are declared here.
   };
+
+  // All props not named here are passed through to the rendered component.
+  static propsToOmit = ['getOptionIsDisabled', 'constraint'];
 
   makeGetOptionIsDisabled = memoize(constraint => (
     // Returns a `getOptionIsDisabled` function based on the passed in
@@ -37,7 +77,7 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
     return (
       <MetadataSelector
         getOptionIsDisabled={this.makeGetOptionIsDisabled(this.props.constraint)}
-        {...omit('constraint', this.props)}
+        {...omit(SimpleConstraintGroupingSelector.propsToOmit, this.props)}
       />
     );
   }

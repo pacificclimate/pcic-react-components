@@ -14,7 +14,23 @@ const { Option } = components;
 
 export default class VariableSelector extends Component {
   static propTypes = {
+    bases: PropTypes.array.isRequired,
+    // List of basis items the selector will build its options from.
+
     constraint: PropTypes.object,
+    // Any option that does not have a context that matches this value
+    // is disabled. Replaces prop getOptionIsDisabled' in `GroupingSelector`.
+
+    debug: PropTypes.bool,
+    debugValue: PropTypes.any,
+    // For debugging, what else?
+
+    // Only props key to this compoonent are declared here.
+    // All props are passed through to rendered selector.
+  };
+
+  static defaultProps = {
+    debugValue: 'Variable'
   };
 
   static valueProps =
@@ -56,15 +72,11 @@ export default class VariableSelector extends Component {
   render() {
     return (
       <SimpleConstraintGroupingSelector
-        isSearchable
-        placeholder={'Type here to search list...'}
         getOptionValue={VariableSelector.getOptionValue}
         getOptionLabel={VariableSelector.getOptionLabel}
         arrangeOptions={VariableSelector.arrangeOptions}
         components={{ Option: VariableSelector.Option }}
         {...this.props}
-        debug={false}
-        debugValue='Variable'
       />
     );
   }

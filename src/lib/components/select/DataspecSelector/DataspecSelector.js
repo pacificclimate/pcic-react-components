@@ -10,7 +10,23 @@ import { mapWithKey } from '../../../utils/fp';
 
 export default class DataspecSelector extends Component {
   static propTypes = {
+    bases: PropTypes.array.isRequired,
+    // List of basis items the selector will build its options from.
+
     constraint: PropTypes.object,
+    // Any option that does not have a context that matches this value
+    // is disabled. Replaces prop getOptionIsDisabled' in `GroupingSelector`.
+
+    debug: PropTypes.bool,
+    debugValue: PropTypes.any,
+    // For debugging, what else?
+
+    // Only props key to this compoonent are declared here.
+    // All props are passed through to rendered selector.
+  };
+
+  static defaultProps = {
+    debugValue: 'Dataspec'
   };
 
   static valueProps =
@@ -41,10 +57,9 @@ export default class DataspecSelector extends Component {
   render() {
     return (
       <SimpleConstraintGroupingSelector
-        {...this.props}
         getOptionValue={DataspecSelector.getOptionValue}
         getOptionLabel={this.getOptionLabel}
-        debugValue='Dataspec'
+        {...this.props}
       />
     );
   }

@@ -79,6 +79,8 @@ import {
   isArray,
   isFunction,
   noop,
+  keys, concat,
+  omit,
 } from 'lodash/fp';
 import { groupByGeneral } from '../../../utils/fp';
 
@@ -92,7 +94,7 @@ export default class GroupingSelector extends React.Component {
     // List of basis items the selector will build its options from.
 
     getOptionValue: PropTypes.func.isRequired,
-    // Maps a basiss item to the `value` property of an option.
+    // Maps a basis item to the `value` property of an option.
     // This function can map many basis items to the same value;
     // GroupingSelector collects all basis items with the same
     // value into a single option.
@@ -110,8 +112,6 @@ export default class GroupingSelector extends React.Component {
     // by Select), or any other operation(s) that arrange the options
     // for presentation in Select.
 
-    components: PropTypes.any,
-
     value: PropTypes.any,
     // The currently selected option.
 
@@ -127,7 +127,15 @@ export default class GroupingSelector extends React.Component {
     debug: PropTypes.bool,
     debugValue: PropTypes.any,
     // For debugging, what else?
+
+    // Only props key to this compoonent are declared here.
   };
+
+  // All props not named here are passed through to the rendered component.
+  static propsToOmit = concat(
+    keys(GroupingSelector.propTypes),
+    'options', 'value', 'onChange',
+  );
 
   static defaultProps = {
     getOptionLabel: option => option.value.toString(),
@@ -162,7 +170,7 @@ export default class GroupingSelector extends React.Component {
     debug: false,
     debugValue: '',
   };
-  
+
   log(...args) {
     if (this.props.debug) {
       console.log(`GroupingSelector[${this.props.debugValue}]`, ...args);
@@ -283,9 +291,7 @@ export default class GroupingSelector extends React.Component {
   handleChange = option => this.props.onChange(option.value);
 
   render() {
-    this.log(`.render`)
-    // TODO: Pass through all the Select props.
-
+    // Generate options for React Select v2 component.
     this.log(`.render: arrangedOptions: meta:`, objectId(this.props.bases), this.props.bases)
     const arrangedOptions =
       this.props.arrangeOptions(
@@ -295,26 +301,28 @@ export default class GroupingSelector extends React.Component {
         ));
     this.log(`.render: arrangedOptions: result:`, arrangedOptions)
 
-    // The following two values are picked up in `componentDidMount` and
-    // `componentDidUpdate` to call back (`onChange`) with the replaced value.
-    // React lifecycle prevents doing that here, because it ultimately causes
-    // a state change in the parent's render, which is forbidden.
+    // Replace an invalid value.
+    //
+    // The following two instance properties are picked up in lifecycle hooks
+    // `componentDidMount` and `componentDidUpdate`, which call back
+    // (via `onChange`) as needed with the replaced value.
+    // We cannot call back here, because the React lifecycle requires
+    // `render` to be a pure (i.e., without side effects) function.
     this.willReplaceValue =
       isFunction(this.props.replaceInvalidValue) &&
       !this.isValidValue(this.props.value);
+
     this.valueToUse =
       this.willReplaceValue ?
         this.props.replaceInvalidValue(arrangedOptions) :
-        this.props.value
-    ;
+        this.props.value;
 
-    this.log(`.render: return`)
     return (
       <Select
-        {...this.props}
         options={arrangedOptions}
         value={this.optionFor(this.valueToUse)}
         onChange={this.handleChange}
+        {...omit(GroupingSelector.propsToOmit, this.props)}
       />
     );
   }
