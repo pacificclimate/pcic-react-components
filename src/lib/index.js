@@ -1,5 +1,5 @@
 // Selector components
-export { default as DatasetSelector }
+export { default as DataspecSelector }
   from './components/select/DataspecSelector';
 export { default as EmissionsScenarioSelector }
   from './components/select/EmissionsScenarioSelector';
