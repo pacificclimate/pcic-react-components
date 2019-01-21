@@ -133,8 +133,22 @@ export default class GroupingSelector extends React.Component {
 
   // All props not named here are passed through to the rendered component.
   static propsToOmit = concat(
-    keys(GroupingSelector.propTypes),
-    'options', 'value', 'onChange',
+    // keys(GroupingSelector.propTypes),
+    // Insanely, when the above code is exported and imported into an different
+    // package, it fails (the list of keys is empty). Therefore this ...
+    [
+      'bases',
+      'getOptionValue',
+      'getOptionLabel',
+      'getOptionIsDisabled',
+      'arrangeOptions',
+      'value',
+      'onChange',
+      'replaceInvalidValue',
+      'debug',
+      'debugValue',
+    ],
+    ['options', 'value', 'onChange'],
   );
 
   static defaultProps = {
