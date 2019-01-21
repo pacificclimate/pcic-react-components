@@ -117,7 +117,7 @@ class DemoMEV extends Component {
           <Col {...DemoMEV.colProps}>
             <VariableSelector
               bases={meta}
-              constraint={vConstraint}
+              // constraint={vConstraint}
               value={this.state.mev.variable}
               onChange={this.anyHandleChangeVariable}
             />
