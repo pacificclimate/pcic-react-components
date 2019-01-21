@@ -235,7 +235,10 @@ function (_React$Component) {
   return GroupingSelector;
 }(React.Component);
 
-GroupingSelector.propsToOmit = concat(keys(GroupingSelector.propTypes), 'options', 'value', 'onChange');
+GroupingSelector.propsToOmit = concat( // keys(GroupingSelector.propTypes),
+// Insanely, when the above code is exported and imported into an different
+// package, it fails (the list of keys is empty). Therefore this ...
+['bases', 'getOptionValue', 'getOptionLabel', 'getOptionIsDisabled', 'arrangeOptions', 'value', 'onChange', 'replaceInvalidValue', 'debug', 'debugValue'], ['options', 'value', 'onChange']);
 GroupingSelector.defaultProps = {
   getOptionLabel: function getOptionLabel(option) {
     return option.value.toString();
