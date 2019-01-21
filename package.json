@@ -19,7 +19,7 @@
     "memoize-one": "^5.0.0",
     "prop-types": "^15.6.2",
     "react-bootstrap": "^0.32.4",
-    "react-select": "^2.2.0"
+    "react-select": "^2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
