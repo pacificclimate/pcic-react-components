@@ -3,6 +3,10 @@
 An `npm`-installable package of PCIC-developed React components for use across 
 projects.
 
+Note: This README duplicates information in code comments, and may be out
+of sync with them. It should be replaced by documentation generated from 
+comments, but that is a future project.
+
 ## Installation
 
 This package is not published to a Node package registry.
@@ -10,12 +14,12 @@ Instead, it is installed directly from GitHub, as follows:
 
 Using SSH protocol (preferred):
 ```bash
-npm install git+ssh://git@github.com/pacificclimate/pcic-react-components.git
+npm install git+ssh://git@github.com/pacificclimate/pcic-react-components.git#<version>
 ```
 
 Using HTTPS protocol:
 ```bash
-npm install git+https://git@github.com/pacificclimate/pcic-react-components.git
+npm install git+https://git@github.com/pacificclimate/pcic-react-components.git#<version>
 ```
 
 From there, `pcic-react-components` is like any other installed package,
