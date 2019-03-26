@@ -90,6 +90,7 @@ class DemoMEV extends Component {
               onChange={this.anyHandleChangeModel}
               isSearchable
               placeholder={'Type here to search list...'}
+              debug
             />
             Value: {stringify(this.state.mev[sel])}
             Input constraint: {stringify(mConstraint)}

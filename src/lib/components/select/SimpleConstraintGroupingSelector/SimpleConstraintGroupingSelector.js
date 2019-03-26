@@ -4,7 +4,7 @@ import React from 'react';
 import './SimpleConstraintGroupingSelector.css';
 import { isMatch, some, omit, concat, keys } from 'lodash/fp';
 import memoize from 'memoize-one';
-import MetadataSelector from '../GroupingSelector';
+import GroupingSelector from '../GroupingSelector';
 
 
 export default class SimpleConstraintGroupingSelector extends React.Component {
@@ -75,7 +75,7 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
 
   render() {
     return (
-      <MetadataSelector
+      <GroupingSelector
         getOptionIsDisabled={this.makeGetOptionIsDisabled(this.props.constraint)}
         {...omit(SimpleConstraintGroupingSelector.propsToOmit, this.props)}
       />
