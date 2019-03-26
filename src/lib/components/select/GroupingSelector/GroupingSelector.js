@@ -118,12 +118,6 @@ export default class GroupingSelector extends React.Component {
     onChange: PropTypes.func,
     // Called when a different option is selected.
 
-    replaceInvalidValue: PropTypes.func,
-    // Called when value passed in is not a valid value.
-    // Called with list of all options.
-    // Must return a valid value.
-    // Beware: If you always return an invalid value from this, you're screwed.
-    
     debug: PropTypes.bool,
     debugValue: PropTypes.any,
     // For debugging, what else?
@@ -157,27 +151,6 @@ export default class GroupingSelector extends React.Component {
     getOptionIsDisabled: constant(false),
 
     arrangeOptions: options => sortBy('label')(options),
-
-    replaceInvalidValue: options => {
-      // Return first (in order of UI presentation) enabled option,
-      // or else null if no such option exists.
-      const allOptions =
-        options[0] && isArray(options[0].options) ?
-          flatMap('options')(options) :  // grouped
-          options;                       // ungrouped
-      const firstEnabledOption = find({ isDisabled: false }, allOptions);
-      console.log(`GroupingSelector[...].replaceInvalidValue: firstEnabledOption:`, firstEnabledOption)
-      // This is sketchy, because if there is never any enabled option,
-      // it always returns `undefined`, which is invalid, and causes an infinite
-      // update loop. OTOH, if we convert the undefined to `null`, it can
-      // prematurely update the value to `null`, and that is both stable
-      // and wrong. This works for now.
-      // FIXME by adjusting the logic for replacement to allow checking for
-      // a valid value in the case that the last value was null. Then use
-      // the commented out line below to convert undefined to null.
-      return firstEnabledOption && firstEnabledOption.value;
-      // return firstEnabledOption ? firstEnabledOption.value : null;
-    },
 
     onChange: noop,
 
