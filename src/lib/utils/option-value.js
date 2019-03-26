@@ -1,5 +1,15 @@
-import { find, flatMap, isArray } from 'lodash/fp';
+import { find, flatMap, isArray, isEqual, some } from 'lodash/fp';
 
+
+// FIXME: Make the options a parameter. Or better yet ditch this thing.
+export const isValidValue = value =>
+  // A value is valid if it is null or if it is (deep) equal to the value of
+  // some enabled option.
+  value === null ||
+  some(
+    option => !option.isDisabled && isEqual(option.value, value),
+    this.constrainedOptions(this.props.getOptionIsDisabled, this.props.bases)
+  );
 
 // TODO: Rename this more specifically? It is just one way to do it.
 export const replaceInvalidValue = options => {

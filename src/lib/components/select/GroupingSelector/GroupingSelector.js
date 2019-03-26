@@ -256,15 +256,6 @@ export default class GroupingSelector extends React.Component {
   // `null` is a valid value and means 'no selection'.
   // `undefined` is not a valid value.
 
-  isValidValue = value =>
-    // A value is valid if it is null or if it is (deep) equal to the value of
-    // some enabled option.
-    value === null ||
-    some(
-      option => !option.isDisabled && isEqual(option.value, value),
-      this.constrainedOptions(this.props.getOptionIsDisabled, this.props.bases)
-    );
-
   optionFor = value =>
     // The option for a value is null if the value is null, or the option
     // whose value (deep) equals the value.
@@ -288,26 +279,10 @@ export default class GroupingSelector extends React.Component {
         ));
     this.log(`.render: arrangedOptions: result:`, arrangedOptions)
 
-    // Replace an invalid value.
-    //
-    // The following two instance properties are picked up in lifecycle hooks
-    // `componentDidMount` and `componentDidUpdate`, which call back
-    // (via `onChange`) as needed with the replaced value.
-    // We cannot call back here, because the React lifecycle requires
-    // `render` to be a pure (i.e., without side effects) function.
-    this.willReplaceValue =
-      isFunction(this.props.replaceInvalidValue) &&
-      !this.isValidValue(this.props.value);
-
-    this.valueToUse =
-      this.willReplaceValue ?
-        this.props.replaceInvalidValue(arrangedOptions) :
-        this.props.value;
-
     return (
       <Select
         options={arrangedOptions}
-        value={this.optionFor(this.valueToUse)}
+        value={this.optionFor(this.props.value)}
         onChange={this.handleChange}
         {...omit(GroupingSelector.propsToOmit, this.props)}
       />
