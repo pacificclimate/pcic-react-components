@@ -12,19 +12,17 @@
 // It works as follows:
 //
 //  - Each element of the basis list is mapped to a representative value
-//    (which can be an arbitrary JS object) that represents it. Many basis
-//    elements can map to the same representative value. The user supplies
-//    the function that maps basis item to representative value.
+//    (which can be an arbitrary JS object). Many basis
+//    elements can map to the same representative. The user supplies
+//    the function that maps basis item to representative.
 //
-//  - Each unique representative value becomes an option in the selector.
+//  - Each unique representative becomes an option in the selector.
 //    An option is an object containing the following properties:
 //
-//      - `representative`: The representative value.
+//      - `representative`: The representative.
 //
-//      - `contexts`: The list of all basis items which mapped to this value.
-//
-//        This list can be used to determine enabled/disabled status of an
-//        option, for example.
+//      - `contexts`: The list of all basis items which mapped to the option's
+//        representative.
 //
 //      - `isDisabled`: Set to `true` if the option is disabled.
 //
@@ -82,7 +80,7 @@ export default class GroupingSelector extends React.Component {
 
     getOptionRepresentative: PropTypes.func.isRequired,
     // Maps a basis item to the `representative` property of an option.
-    // This function can map many basis items to the same representative value;
+    // This function can map many basis items to the same representative;
     // GroupingSelector collects all basis items with the same
     // representative into a single option.
 
