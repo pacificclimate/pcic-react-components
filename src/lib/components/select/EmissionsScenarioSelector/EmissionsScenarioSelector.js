@@ -29,7 +29,7 @@ export default class EmissionsScenarioSelector extends Component {
     debugValue: 'Emissions'
   };
 
-  static getOptionValue = metadatum => metadatum.experiment;
+  static getOptionRepresentative = metadatum => metadatum.experiment;
 
   static formattedPart = {
     historical: 'Historical',
@@ -49,13 +49,13 @@ export default class EmissionsScenarioSelector extends Component {
       split(/\s*,\s*/),
       map(EmissionsScenarioSelector.formatPart),
       join(', then '),
-    )(option.value)
+    )(option.representative)
   );
 
   render() {
     return (
       <SimpleConstraintGroupingSelector
-        getOptionValue={EmissionsScenarioSelector.getOptionValue}
+        getOptionRepresentative={EmissionsScenarioSelector.getOptionRepresentative}
         getOptionLabel={EmissionsScenarioSelector.getOptionLabel}
         {...this.props}
       />
