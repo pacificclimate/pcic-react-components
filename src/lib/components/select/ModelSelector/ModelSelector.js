@@ -27,12 +27,12 @@ export default class ModelSelector extends Component {
     debugValue: 'Model'
   };
 
-  static getOptionValue = metadatum => metadatum.model_id;
+  static getOptionRepresentative = metadatum => metadatum.model_id;
 
   render() {
     return (
       <SimpleConstraintGroupingSelector
-        getOptionValue={ModelSelector.getOptionValue}
+        getOptionRepresentative={ModelSelector.getOptionRepresentative}
         {...this.props}
       />
     );
