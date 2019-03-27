@@ -56,7 +56,7 @@ export default class DemoMEV extends Component {
             />
           </Col>
           <Col lg={3}>
-            {stringify(this.state.selectorValue && this.state.selectorValue.label)}
+            {stringify(this.state.selectorValue && this.state.selectorValue.representative)}
           </Col>
         </Row>
       </Grid>
