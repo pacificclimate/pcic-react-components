@@ -51,7 +51,8 @@ export default class DemoGroupingSelector extends Component {
           <Col lg={3}>
             <SimpleConstraintGroupingSelector
               bases={meta}
-              getOptionRepresentative={this.state.selector.value.getOptionValue}
+              getOptionRepresentative={this.state.selector.value.getOptionRepresentative}
+              getOptionLabel={this.state.selector.value.getOptionLabel}
               value={this.state.value}
               onChange={this.handleChangeSelectorValue}
               debug={true}

@@ -22,7 +22,7 @@ const selectors = [
 
 export default class DemoGroupingSelector extends Component {
   state = {
-    selector: selectors[1],
+    selector: selectors[0],
     value: null,
   };
 
@@ -51,7 +51,8 @@ export default class DemoGroupingSelector extends Component {
           <Col lg={3}>
             <GroupingSelector
               bases={meta}
-              getOptionRepresentative={this.state.selector.value.getOptionValue}
+              getOptionRepresentative={this.state.selector.value.getOptionRepresentative}
+              getOptionLabel={this.state.selector.value.getOptionLabel}
               value={this.state.value}
               onChange={this.handleChangeSelectorValue}
               debug={true}

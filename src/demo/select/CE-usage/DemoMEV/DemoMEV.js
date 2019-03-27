@@ -25,14 +25,8 @@ class DemoMEV extends Component {
   state = {
     mev: {
       model: undefined,
-      emissions: {
-        // experiment: 'historical, rcp45',
-      },
-      variable: {
-        // variable_id: "pr",
-        // variable_name: "Precipitation",
-        // multi_year_mean: true,
-      },
+      emissions: undefined,
+      variable: undefined,
     },
     // selectorOrder: 'model emissions variable'.split(' '),
     selectorOrder: 'model emissions variable'.split(' '),
@@ -48,24 +42,24 @@ class DemoMEV extends Component {
       [collection]: { ...prevState[collection], [item]: value }
     }));
 
-  anyHandleChangeModel = (value) =>
+  anyHandleChangeModel = (option) =>
     this.setState(prevState => ({
-      mev: { ...prevState.mev, model: { model_id: value } }
+      mev: { ...prevState.mev, model: option }
     }));
-  anyHandleChangeEmissions = (value) =>
+  anyHandleChangeEmissions = (option) =>
     this.setState(prevState => ({
-      mev: { ...prevState.mev, emissions: { experiment: value } }
+      mev: { ...prevState.mev, emissions: option }
     }));
-  anyHandleChangeVariable = (value) =>
+  anyHandleChangeVariable = (option) =>
     this.setState(prevState => ({
-      mev: { ...prevState.mev, variable: value }
+      mev: { ...prevState.mev, variable: option }
     }));
 
   anySelectorConstraint =
     (thisSelector, selectorOrder, state) => flow(
       tap(() => console.log(`anySelectorConstraint: thisSelector`, thisSelector, `selectorOrder`, selectorOrder, 'state', state)),
       takeWhile(selector => selector !== thisSelector),
-      map(selector => state[selector]),
+      map(selector => state[selector] && state[selector].representative),
       objUnion,
       tap(result => console.log(`anySelectorConstraint: result`, result))
     )(selectorOrder)
@@ -78,58 +72,47 @@ class DemoMEV extends Component {
   };
 
   anySelector = sel => {
-    switch (sel) {
-      case 'model':
-        const mConstraint = this.anySelectorConstraint('model', this.state.selectorOrder, this.state.mev);
-        return (
-          <Col {...DemoMEV.colProps}>
-            <ModelSelector
-              bases={meta}
-              constraint={mConstraint}
-              value={this.state.mev.model && this.state.mev.model.model_id}
-              onChange={this.anyHandleChangeModel}
-              isSearchable
-              placeholder={'Type here to search list...'}
-              debug
-            />
-            Value: {stringify(this.state.mev[sel])}
-            Input constraint: {stringify(mConstraint)}
-          </Col>
-        );
+    const constraint = this.anySelectorConstraint(sel, this.state.selectorOrder, this.state.mev);
 
-      case 'emissions':
-        const eConstraint = this.anySelectorConstraint('emissions', this.state.selectorOrder, this.state.mev);
-        return (
-          <Col {...DemoMEV.colProps}>
-            <EmissionsScenarioSelector
-              bases={meta}
-              constraint={eConstraint}
-              value={this.state.mev.emissions.experiment}
-              onChange={this.anyHandleChangeEmissions}
-            />
-            {stringify(this.state.mev[sel])}
-            Input constraint: {stringify(eConstraint)}
-          </Col>
-        );
+    const selector = {
+      'model': (
+        <ModelSelector
+          bases={meta}
+          constraint={constraint}
+          value={this.state.mev.model}
+          onChange={this.anyHandleChangeModel}
+          isSearchable
+          placeholder={'Type here to search list...'}
+          debug
+        />
+      ),
 
-      case 'variable':
-        const vConstraint = this.anySelectorConstraint('variable', this.state.selectorOrder, this.state.mev);
-        return (
-          <Col {...DemoMEV.colProps}>
-            <VariableSelector
-              bases={meta}
-              // constraint={vConstraint}
-              value={this.state.mev.variable}
-              onChange={this.anyHandleChangeVariable}
-            />
-            {stringify(this.state.mev[sel])}
-            Input constraint: {stringify(vConstraint)}
-          </Col>
-        );
+      'emissions': (
+        <EmissionsScenarioSelector
+          bases={meta}
+          constraint={constraint}
+          value={this.state.mev.emissions}
+          onChange={this.anyHandleChangeEmissions}
+        />
+      ),
 
-      default:
-        return 'Idiot';
-    }
+      'variable': (
+        <VariableSelector
+          bases={meta}
+          constraint={constraint}
+          value={this.state.mev.variable}
+          onChange={this.anyHandleChangeVariable}
+        />
+      ),
+    }[sel];
+
+    return (
+      <Col {...DemoMEV.colProps}>
+        {selector}
+        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].representative)}
+        Input constraint: {stringify(constraint)}
+      </Col>
+    );
   };
 
   moveSelectorOrderDown = index => this.setState(prevState => {
@@ -237,7 +220,7 @@ class DemoMEV extends Component {
               value={this.state.dataset}
               onChange={this.handleChangeDataset}
             />
-            {stringify(this.state.dataset)}
+            {stringify(this.state.dataset.representative)}
           </Col>
           <Col {...DemoMEV.colProps} lgOffset={6} mdOffset={6} smOffset={6}>
             <ul>
