@@ -35,10 +35,10 @@ export default class VariableSelector extends Component {
 
   static valueProps =
     'variable_id variable_name multi_year_mean'.split(' ');
-  static getOptionValue = metadatum =>
+  static getOptionRepresentative = metadatum =>
     pick(VariableSelector.valueProps, metadatum);
 
-  static getOptionLabel = ({ value: { variable_id, variable_name }}) =>
+  static getOptionLabel = ({ representative: { variable_id, variable_name }}) =>
     `${variable_id} - ${variable_name}`;
 
   static arrangeOptions = options => {
@@ -46,14 +46,14 @@ export default class VariableSelector extends Component {
       {
         label: 'Multi-Year Mean Datasets',
         options: flow(
-          filter(o => o.value.multi_year_mean),
+          filter(o => o.representative.multi_year_mean),
           sortBy('label'),
         )(options),
       },
       {
         label: 'Time Series Datasets',
         options: flow(
-          filter(o => !o.value.multi_year_mean),
+          filter(o => !o.representative.multi_year_mean),
           sortBy('label'),
         )(options),
       },
@@ -61,18 +61,19 @@ export default class VariableSelector extends Component {
   };
 
   static Option = props => {
+    console.log('Option', props)
     return (
       <Option {...props}>
-        <Glyphicon glyph={props.value.multi_year_mean ? 'repeat' : 'star'}/>
+        {props.data.representative.multi_year_mean ? 'MYM' : 'TS'}
         {' '}
-        {props.label}
+        {props.data.label}
       </Option>
     )};
 
   render() {
     return (
       <SimpleConstraintGroupingSelector
-        getOptionValue={VariableSelector.getOptionValue}
+        getOptionRepresentative={VariableSelector.getOptionRepresentative}
         getOptionLabel={VariableSelector.getOptionLabel}
         arrangeOptions={VariableSelector.arrangeOptions}
         components={{ Option: VariableSelector.Option }}
