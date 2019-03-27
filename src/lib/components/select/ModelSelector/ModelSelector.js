@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import SimpleConstraintGroupingSelector from '../SimpleConstraintGroupingSelector/SimpleConstraintGroupingSelector';
 
 import './ModelSelector.css';
+import { pick } from 'lodash/fp';
 
 
 export default class ModelSelector extends Component {
@@ -27,12 +28,17 @@ export default class ModelSelector extends Component {
     debugValue: 'Model'
   };
 
-  static getOptionRepresentative = metadatum => metadatum.model_id;
+  static valueProps = 'model_id'.split(' ');
+  static getOptionRepresentative = metadatum =>
+    pick(ModelSelector.valueProps, metadatum);
+
+  static getOptionLabel = (option) => option.representative.model_id;
 
   render() {
     return (
       <SimpleConstraintGroupingSelector
         getOptionRepresentative={ModelSelector.getOptionRepresentative}
+        getOptionLabel={ModelSelector.getOptionLabel}
         {...this.props}
       />
     );
