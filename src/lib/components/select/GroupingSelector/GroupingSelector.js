@@ -148,30 +148,9 @@ export default class GroupingSelector extends React.Component {
     }
   }
 
-  // TODO: Remove.
-  condReplaceValue() {
-    if (this.willReplaceValue) {
-      this.log(`.updateInvalidValue: replacing with value:`, this.valueToUse)
-      this.props.onChange(this.valueToUse);
-    }
-  }
-
   constructor(props) {
     super(props);
     this.log(`.cons: meta:`, objectId(props.bases), props.bases)
-  }
-
-  // TODO: Remove.
-  componentDidMount() {
-    this.condReplaceValue();
-  }
-
-
-  // TODO: Remove.
-  componentDidUpdate(prevProps) {
-    this.log(`.cDU: meta:`, objectId(this.props.bases))
-    this.log(`.componentDidMount: props.meta ${this.props.bases === prevProps.bases ? '===' : '!=='} prevProps.meta`)
-    this.condReplaceValue();
   }
 
   // Memoize computation of options list
