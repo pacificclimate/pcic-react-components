@@ -197,7 +197,7 @@ export default class GroupingSelector extends React.Component {
   // A constrained option is an option with isDisabled set according to
   // `props.getOptionIsDisabled`.
   constrainedOptions = memoize(
-    (getOptionIsDisabled, meta) => flow(
+    (getOptionRepresentative, getOptionLabel, getOptionIsDisabled, meta) => flow(
       tap(options => {
         this.log(`.constrainedOptions: meta:`, objectId(meta), meta, 'getOptionIsDisabled:', objectId(getOptionIsDisabled));
         this.log(`.constrainedOptions: options:`, objectId(options), options);
@@ -208,11 +208,7 @@ export default class GroupingSelector extends React.Component {
       tap(options => this.log(`.constrainedOptions: result`, options))
     )(
       // Can't curry a memoized function; have to put it into the flow manually
-      this.allOptions(
-        this.props.getOptionRepresentative,
-        this.props.getOptionLabel,
-        meta
-      )
+      this.allOptions(getOptionRepresentative, getOptionLabel, meta)
     )
   );
 
@@ -222,6 +218,8 @@ export default class GroupingSelector extends React.Component {
     const arrangedOptions =
       this.props.arrangeOptions(
         this.constrainedOptions(
+          this.props.getOptionRepresentative,
+          this.props.getOptionLabel,
           this.props.getOptionIsDisabled,
           this.props.bases,
         ));
