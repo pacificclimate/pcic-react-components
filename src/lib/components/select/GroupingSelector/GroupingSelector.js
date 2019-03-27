@@ -136,13 +136,10 @@ export default class GroupingSelector extends React.Component {
       'getOptionLabel',
       'getOptionIsDisabled',
       'arrangeOptions',
-      'value',
-      'onChange',
-      'replaceInvalidValue',
       'debug',
       'debugValue',
     ],
-    ['options', 'value', 'onChange'],
+    ['options'],
   );
 
   static defaultProps = {
@@ -252,22 +249,6 @@ export default class GroupingSelector extends React.Component {
     )
   );
 
-  // Value-exchange functions
-  // `null` is a valid value and means 'no selection'.
-  // `undefined` is not a valid value.
-
-  optionFor = value =>
-    // The option for a value is null if the value is null, or the option
-    // whose value (deep) equals the value.
-    value === null ?
-      null :
-      find(
-        option => isEqual(option.value, value),
-        this.constrainedOptions(this.props.getOptionIsDisabled, this.props.bases)
-      );
-
-  handleChange = option => this.props.onChange(option.value);
-
   render() {
     // Generate options for React Select v2 component.
     this.log(`.render: arrangedOptions: meta:`, objectId(this.props.bases), this.props.bases)
@@ -282,8 +263,6 @@ export default class GroupingSelector extends React.Component {
     return (
       <Select
         options={arrangedOptions}
-        value={this.optionFor(this.props.value)}
-        onChange={this.handleChange}
         {...omit(GroupingSelector.propsToOmit, this.props)}
       />
     );

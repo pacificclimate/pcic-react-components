@@ -30,8 +30,8 @@ export default class DemoGroupingSelector extends Component {
             />
           </Col>
           <Col lg={3}>
-            State:
-            {stringify(this.state)}
+            Value:
+            {stringify(this.state.value && this.state.value.label)}
           </Col>
         </Row>
       </Grid>

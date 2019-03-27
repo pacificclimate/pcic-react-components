@@ -1,6 +1,22 @@
 import { find, flatMap, isArray, isEqual, some } from 'lodash/fp';
 
 
+// Value-exchange functions
+// `null` is a valid value and means 'no selection'.
+// `undefined` is not a valid value.
+
+// FIXME: Add options parameter.
+export const optionFor = value =>
+  // The option for a value is null if the value is null, or the option
+  // whose value (deep) equals the value.
+  value === null ?
+    null :
+    find(
+      option => isEqual(option.value, value),
+      this.constrainedOptions(this.props.getOptionIsDisabled, this.props.bases)
+    );
+
+
 // FIXME: Make the options a parameter. Or better yet ditch this thing.
 export const isValidValue = value =>
   // A value is valid if it is null or if it is (deep) equal to the value of
