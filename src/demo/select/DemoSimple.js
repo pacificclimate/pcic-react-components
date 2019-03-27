@@ -45,6 +45,9 @@ export default class DemoMEV extends Component {
             />
           </Col>
           <Col lg={3}>
+            {stringify(this.state.selector.label)}
+          </Col>
+          <Col lg={3}>
             <Selector
               bases={meta}
               value={this.state.selectorValue}
@@ -53,8 +56,7 @@ export default class DemoMEV extends Component {
             />
           </Col>
           <Col lg={3}>
-            State:
-            {stringify(this.state)}
+            {stringify(this.state.selectorValue && this.state.selectorValue.label)}
           </Col>
         </Row>
       </Grid>
