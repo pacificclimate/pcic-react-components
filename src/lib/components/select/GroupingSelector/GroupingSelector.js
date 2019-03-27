@@ -11,15 +11,15 @@
 //
 // It works as follows:
 //
-//  - Each element of the basis list is mapped to a value (which can be an
-//    arbitrary JS object) that represents it. Many basis elements can map
-//    to the same value. The user supplies the function that maps basis item
-//    to representative value.
+//  - Each element of the basis list is mapped to a representative value
+//    (which can be an arbitrary JS object) that represents it. Many basis
+//    elements can map to the same representative value. The user supplies
+//    the function that maps basis item to representative value.
 //
 //  - Each unique representative value becomes an option in the selector.
 //    An option is an object containing the following properties:
 //
-//      - `value`: The representative value.
+//      - `representative`: The representative value.
 //
 //      - `contexts`: The list of all basis items which mapped to this value.
 //
@@ -44,19 +44,6 @@
 //    Select v2 selector.
 //    By default, `arrangeOptions` sorts the options by the label string.
 //
-//  - The active selection is communicated, via props `value` and `onChange`,
-//    as the option value only. (This differs from React Select v2,
-//    which communicates the entire option value. Introducing this difference
-//    may or may not prove wise; it is convenient for the immeidate application
-//    in Climate Exporer.)
-//
-//  - If an invalid value is supplied to the selector, it is replaced with the
-//    value returned by the function prop `replaceInvalidValue`. An invalid
-//    value is any value that does not match an enabled option value, or `null`.
-//    `null` is a valid value, and has the universal meaning, 'no selection'.
-//    Warning: This function must return a valid value, or an error will occur.
-//    By default, `replaceInvalidValue` is a function that returns the value
-//    of the first enabled option.
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -93,11 +80,11 @@ export default class GroupingSelector extends React.Component {
     bases: PropTypes.array.isRequired,
     // List of basis items the selector will build its options from.
 
-    getOptionValue: PropTypes.func.isRequired,
-    // Maps a basis item to the `value` property of an option.
-    // This function can map many basis items to the same value;
+    getOptionRepresentative: PropTypes.func.isRequired,
+    // Maps a basis item to the `representative` property of an option.
+    // This function can map many basis items to the same representative value;
     // GroupingSelector collects all basis items with the same
-    // value into a single option.
+    // representative into a single option.
 
     getOptionLabel: PropTypes.func,
     // Maps an option to the label (a string) for that option.
@@ -132,7 +119,7 @@ export default class GroupingSelector extends React.Component {
     // package, it fails (the list of keys is empty). Therefore this ...
     [
       'bases',
-      'getOptionValue',
+      'getOptionRepresentative',
       'getOptionLabel',
       'getOptionIsDisabled',
       'arrangeOptions',
@@ -143,7 +130,7 @@ export default class GroupingSelector extends React.Component {
   );
 
   static defaultProps = {
-    getOptionLabel: option => option.value.toString(),
+    getOptionLabel: option => option.representative.toString(),
 
     getOptionIsDisabled: constant(false),
 
@@ -161,6 +148,7 @@ export default class GroupingSelector extends React.Component {
     }
   }
 
+  // TODO: Remove.
   condReplaceValue() {
     if (this.willReplaceValue) {
       this.log(`.updateInvalidValue: replacing with value:`, this.valueToUse)
@@ -173,10 +161,13 @@ export default class GroupingSelector extends React.Component {
     this.log(`.cons: meta:`, objectId(props.bases), props.bases)
   }
 
+  // TODO: Remove.
   componentDidMount() {
     this.condReplaceValue();
   }
 
+
+  // TODO: Remove.
   componentDidUpdate(prevProps) {
     this.log(`.cDU: meta:`, objectId(this.props.bases))
     this.log(`.componentDidMount: props.meta ${this.props.bases === prevProps.bases ? '===' : '!=='} prevProps.meta`)
@@ -190,12 +181,11 @@ export default class GroupingSelector extends React.Component {
   // list of metadata. An option item has the following form:
   //
   //  {
-  //    value: <object>
-  //      The value of the option; exchanged through props.value
-  //      and props.onChange.
-  //    contexts: [ <object> ]
-  //      The contexts in which the option occurs. A context is a
-  //      basis item from which an equal option value is generated.
+  //    representative: <object>
+  //      The representative value of the option.
+  //    context: [ <object> ]
+  //      The contexts in which the option occurs. A context is a basis item
+  //      from which an equal option representative value is generated.
   //      (Contexts are often used to determine enabled/disabled status,
   //      but this function is not concerned with that status.)
   //    label: <string>
@@ -209,17 +199,17 @@ export default class GroupingSelector extends React.Component {
   // times per render, depending on the behaviour of downstream functions
   // such as `constrainedOptions` and `props.arrangeOptions`.
   allOptions = memoize(
-    (getOptionValue, getOptionLabel, meta) =>
+    (getOptionRepresentative, getOptionLabel, meta) =>
       flow(
         tap(meta => this.log(`.allOptions: meta:`, objectId(meta), meta)),
         map(m => ({
           context: m,
-          value: getOptionValue(m),
+          representative: getOptionRepresentative(m),
         })),
-        groupByGeneral(({ value }) => value),
+        groupByGeneral(({ representative }) => representative),
         map(group => ({
-            contexts: map(item => item.context)(group.items),
-            value: group.by,
+          contexts: map(item => item.context)(group.items),
+          representative: group.by,
         })),
         map(option => assign(option, { label: getOptionLabel(option) })),
         // tap(m => this.log(`.allOptions`, m)),
@@ -242,7 +232,7 @@ export default class GroupingSelector extends React.Component {
     )(
       // Can't curry a memoized function; have to put it into the flow manually
       this.allOptions(
-        this.props.getOptionValue,
+        this.props.getOptionRepresentative,
         this.props.getOptionLabel,
         meta
       )

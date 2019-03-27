@@ -23,7 +23,7 @@ export default class DemoGroupingSelector extends Component {
           <Col lg={3}>
             <GroupingSelector
               bases={meta}
-              getOptionValue={ModelSelector.getOptionValue}
+              getOptionRepresentative={ModelSelector.getOptionValue}
               value={this.state.value}
               onChange={this.handleChangeSelectorValue}
               debug={true}
