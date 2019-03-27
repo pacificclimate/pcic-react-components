@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import {
-  flow, split, map, join,
+  flow, split, map, join, pick,
 } from 'lodash/fp';
 
 import SimpleConstraintGroupingSelector from '../SimpleConstraintGroupingSelector/SimpleConstraintGroupingSelector';
@@ -29,7 +29,9 @@ export default class EmissionsScenarioSelector extends Component {
     debugValue: 'Emissions'
   };
 
-  static getOptionRepresentative = metadatum => metadatum.experiment;
+  static valueProps = 'experiment'.split(' ');
+  static getOptionRepresentative = metadatum =>
+    pick(EmissionsScenarioSelector.valueProps, metadatum);
 
   static formattedPart = {
     historical: 'Historical',
@@ -49,7 +51,7 @@ export default class EmissionsScenarioSelector extends Component {
       split(/\s*,\s*/),
       map(EmissionsScenarioSelector.formatPart),
       join(', then '),
-    )(option.representative)
+    )(option.representative.experiment)
   );
 
   render() {
