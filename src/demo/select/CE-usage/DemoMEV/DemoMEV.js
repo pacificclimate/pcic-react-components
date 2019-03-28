@@ -94,13 +94,17 @@ class DemoMEV extends Component {
 
     return (
       <Col {...DemoMEV.colProps}>
+        <div style={{height: '10em'}}>
+          Input constraint: {stringify(constraint)}
+        </div>
         <Selector
           bases={meta}
           constraint={constraint}
           value={this.state.mev[sel]}
+          debug={true}
+          debugValue={sel}
           {...selProps}
         />
-        Input constraint: {stringify(constraint)}
         Value: {stringify(this.state.mev[sel] && this.state.mev[sel].representative)}
       </Col>
     );
@@ -119,7 +123,7 @@ class DemoMEV extends Component {
 
   render() {
     console.log('DemoMEV.render')
-    const mevConstraint = objUnion(this.state.mev);
+    const mevConstraint = objUnion(map(mev => mev && mev.representative)(this.state.mev));
     console.log('DemoMEV.render: mevConstraint', mevConstraint)
     const mevFilteredMetadata = filter(mevConstraint)(meta);
     console.log('DemoMEV.render: mevFilteredMetadata', mevFilteredMetadata)
@@ -206,12 +210,20 @@ class DemoMEV extends Component {
 
         <Row>
           <Col {...DemoMEV.colProps}>
+            mevConstraint:
+            <div style={{height: '10em'}}>
+              {stringify(mevConstraint)}
+            </div>
+            mevFilteredMetadata:
+            {/*<div style={{height: '10em'}}>*/}
+              {/*{stringify(mevFilteredMetadata)}*/}
+            {/*</div>*/}
             <DatasetSelector
               bases={mevFilteredMetadata}
               value={this.state.dataset}
               onChange={this.handleChangeDataset}
             />
-            {stringify(this.state.dataset.representative)}
+            {stringify(this.state.dataset && this.state.dataset.representative)}
           </Col>
           <Col {...DemoMEV.colProps} lgOffset={6} mdOffset={6} smOffset={6}>
             <ul>

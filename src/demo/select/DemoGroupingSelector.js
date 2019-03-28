@@ -23,11 +23,11 @@ const selectors = [
 export default class DemoGroupingSelector extends Component {
   state = {
     selector: selectors[0],
-    value: null,
+    value: undefined,
   };
 
   handleChangeSelector = selector => this.setState(
-    { selector, value: null }
+    { selector, value: undefined }
   );
 
   handleChangeSelectorValue = (value) =>
