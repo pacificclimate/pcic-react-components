@@ -30,7 +30,9 @@ const getOptionLabel = option => (
 const EmissionsScenarioSelector = makeStandardSelector({
   defaultDebugValue: 'Emissions',
   representativeProps: ['experiment'],
-  getOptionLabel,
+  selectorProps: {
+    getOptionLabel,
+  },
 });
 
 export default EmissionsScenarioSelector;

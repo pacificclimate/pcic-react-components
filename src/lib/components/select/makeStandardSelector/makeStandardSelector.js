@@ -3,16 +3,14 @@
 //
 // All provided specializations of `SimpleConstraintGroupingSelector` differ
 // essentially only on the subset of properties of the basis metadata that
-// forms the representation, and the label that used for each group.
+// forms the grouping representative, and the label that used for each group.
 //
 // This HOC abstracts that specialization. It:
 //
 //  - sets up propTypes
 //  - creates and passes prop `getOptionRepresentative`
-//  - passes through prop `getOptionLabel`
 //  - passes through `additionalProps` as props
 //  - passes through all props supplied to created component
-//
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -27,8 +25,7 @@ export const makeStandardSelector = (
   {
     defaultDebugValue,
     representativeProps,
-    getOptionLabel,
-    additionalProps = {},
+    selectorProps,
   }
 ) => {
   const getOptionRepresentative = metadatum =>
@@ -57,14 +54,13 @@ export const makeStandardSelector = (
 
     // Expose these for convenience.
     static getOptionRepresentative = getOptionRepresentative;
-    static getOptionLabel = getOptionLabel;
+    static getOptionLabel = selectorProps.getOptionLabel;
 
     render() {
       return (
         <SimpleConstraintGroupingSelector
           getOptionRepresentative={getOptionRepresentative}
-          getOptionLabel={getOptionLabel}
-          {...additionalProps}
+          {...selectorProps}
           {...this.props}
         />
       );

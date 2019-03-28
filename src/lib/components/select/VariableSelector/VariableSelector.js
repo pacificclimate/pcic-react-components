@@ -37,9 +37,9 @@ const Option = props => {
 const VariableSelector = makeStandardSelector({
   defaultDebugValue: 'Variable',
   representativeProps: 'variable_id variable_name multi_year_mean'.split(' '),
-  getOptionLabel: ({ representative: { variable_id, variable_name }}) =>
-    `${variable_id} - ${variable_name}`,
-  additionalProps: {
+  selectorProps: {
+    getOptionLabel: ({ representative: { variable_id, variable_name }}) =>
+      `${variable_id} - ${variable_name}`,
     arrangeOptions,
     components: { Option },
   }
