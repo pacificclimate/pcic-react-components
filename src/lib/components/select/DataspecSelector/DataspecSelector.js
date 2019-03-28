@@ -49,12 +49,18 @@ export default class DataspecSelector extends Component {
 
   // Return an option label including the user-friendly 'Run <n>' names
   // for ensemble_member values.
-  getOptionLabel = ({ representative: { start_date, end_date, ensemble_member }}) => {
+  getOptionLabel =
+    ({ representative: { start_date, end_date, ensemble_member }}) =>
+  {
     const eMT = DataspecSelector.ensembleMemberTranslation(this.props.bases);
     return `${eMT[ensemble_member]} (${ensemble_member}), ${start_date}–${end_date}`;
   };
-  
-  render() {
+
+  static getOptionLabel =
+    ({ representative: { start_date, end_date, ensemble_member }}) =>
+      `${ensemble_member}, ${start_date}–${end_date}`;
+
+    render() {
     return (
       <SimpleConstraintGroupingSelector
         getOptionRepresentative={DataspecSelector.getOptionRepresentative}
