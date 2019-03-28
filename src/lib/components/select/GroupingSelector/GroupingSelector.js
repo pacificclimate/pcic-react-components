@@ -40,8 +40,18 @@
 //    function `arrangeOptions` that can be used to sort options, form option
 //    groups, or otherwise ready them for consumption by the rendered React
 //    Select v2 selector.
+//
 //    By default, `arrangeOptions` sorts the options by the label string.
 //
+//  - If an invalid value is supplied to the selector, it is replaced with the
+//    value returned by the function prop `replaceInvalidValue`. An invalid
+//    value is any value that does not match an enabled option value, or `null`.
+//    `null` is a valid value, and has the universal meaning, 'no selection'.
+//    Warning: This function must eventually return a valid value, or an
+//    infinite update loop will occur.
+//
+//    By default, `replaceInvalidValue` is a function that returns the value
+//    of the first enabled option.
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -53,19 +63,14 @@ import {
   assign,
   flow,
   constant,
-  identity,
   map,
-  flatMap,
   find,
   sortBy,
-  some,
   tap,
-  isEqual,
-  isArray,
   isFunction,
   isUndefined,
   noop,
-  keys, concat,
+  concat,
   omit,
 } from 'lodash/fp';
 import { groupByGeneral } from '../../../utils/fp';
@@ -73,6 +78,7 @@ import { groupByGeneral } from '../../../utils/fp';
 import objectId from '../../../debug-utils/object-id';
 
 import './GroupingSelector.css';
+import { flattenOptions, isValidValue } from '../../../utils/select';
 
 export default class GroupingSelector extends React.Component {
   static propTypes = {
@@ -142,14 +148,11 @@ export default class GroupingSelector extends React.Component {
 
     arrangeOptions: options => sortBy('label')(options),
 
-    replaceInvalidValue: (value, options) => {
+    replaceInvalidValue: (options, value) => {
       // Return first (in order of UI presentation) enabled option,
       // or else null if no such option exists.
-      const allOptions =
-        options[0] && isArray(options[0].options) ?
-          flatMap('options')(options) :  // grouped
-          options;                       // ungrouped
-      const firstEnabledOption = find({ isDisabled: false }, allOptions);
+      const firstEnabledOption =
+        find({ isDisabled: false }, flattenOptions(options));
       console.log(`GroupingSelector[...].replaceInvalidValue: firstEnabledOption:`, firstEnabledOption)
       // Prevent infinite update loop: If there is no enabled option and
       // if the previous value was also undefined, return `null`.
@@ -268,17 +271,6 @@ export default class GroupingSelector extends React.Component {
     )
   );
 
-  // TODO: Use arrangedOptinos
-  isValidValue = (value, options) =>
-    // A option is valid if it is null or if it is (deep) equal to an
-    // enabled option.
-    // `undefined` is not a valid option
-    value === null ||
-    some(
-      option => !option.isDisabled && isEqual(value, option),
-      options
-    );
-
   render() {
     // Generate options for React Select v2 component.
     this.log(`.render: arrangedOptions: meta:`, objectId(this.props.bases), this.props.bases)
@@ -300,14 +292,12 @@ export default class GroupingSelector extends React.Component {
     // `render` to be a pure (i.e., without side effects) function.
     this.willReplaceValue =
       isFunction(this.props.replaceInvalidValue) &&
-      !this.isValidValue(this.props.value, abledOptions);
-    this.log(`.render: willReplaceValue:`, this.willReplaceValue)
+      !isValidValue(arrangedOptions, this.props.value);
 
     this.valueToUse =
       this.willReplaceValue ?
-        this.props.replaceInvalidValue(this.props.value, arrangedOptions) :
+        this.props.replaceInvalidValue(arrangedOptions, this.props.value) :
         this.props.value;
-    this.log(`.render: valueToUse:`, this.valueToUse)
 
     return (
       <Select
