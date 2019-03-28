@@ -47,7 +47,7 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
   // All props not named here are passed through to the rendered component.
   static propsToOmit = ['getOptionIsDisabled', 'constraint'];
 
-  makeGetOptionIsDisabled = memoize(constraint => (
+  makeGetOptionIsDisabled = memoize(constraint =>
     // Returns a `getOptionIsDisabled` function based on the passed in
     // constraint. It is important that the function be a distinct function
     // for each constraint, instead of the same function (object) that closes
@@ -62,10 +62,9 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
     //
     // This function is memoized to eliminate false signals that the constraint
     // has changed.
-    option => !some(
-      context => isMatch(this.props.constraint, context)
-    )(option.contexts)
-  ));
+    option =>
+      !some(context => isMatch(constraint, context))(option.contexts)
+  );
 
   render() {
     return (
