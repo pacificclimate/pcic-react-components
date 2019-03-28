@@ -1,3 +1,19 @@
+// This is a higher-order component that builds a specialized
+// `SimpleConstraintGroupingSelector`.
+//
+// All provided specializations of `SimpleConstraintGroupingSelector` differ
+// essentially only on the subset of properties of the basis metadata that
+// forms the representation, and the label that used for each group.
+//
+// This HOC abstracts that specialization. It:
+//
+//  - sets up propTypes
+//  - creates and passes prop `getOptionRepresentative`
+//  - passes through prop `getOptionLabel`
+//  - passes through `additionalProps` as props
+//  - passes through all props supplied to created component
+//
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
