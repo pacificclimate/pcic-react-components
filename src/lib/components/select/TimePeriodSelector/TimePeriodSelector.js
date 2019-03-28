@@ -20,7 +20,7 @@ export default class TimePeriodSelector extends Component {
     debugValue: PropTypes.any,
     // For debugging, what else?
 
-    // Only props key to this compoonent are declared here.
+    // Only props key to this component are declared here.
     // All props are passed through to rendered selector.
   };
 
@@ -30,16 +30,16 @@ export default class TimePeriodSelector extends Component {
 
   static valueProps =
     'start_date end_date'.split(' ');
-  static getOptionValue = metadatum =>
+  static getOptionRepresentative = metadatum =>
     pick(TimePeriodSelector.valueProps, metadatum);
 
-  static getOptionLabel = ({ value: { start_date, end_date }}) =>
+  static getOptionLabel = ({ representative: { start_date, end_date }}) =>
     `${start_date}-${end_date}`;
 
   render() {
     return (
       <SimpleConstraintGroupingSelector
-        getOptionValue={TimePeriodSelector.getOptionValue}
+        getOptionRepresentative={TimePeriodSelector.getOptionRepresentative}
         getOptionLabel={TimePeriodSelector.getOptionLabel}
         {...this.props}
       />
