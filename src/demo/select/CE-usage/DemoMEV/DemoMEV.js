@@ -72,45 +72,36 @@ class DemoMEV extends Component {
   };
 
   anySelector = sel => {
-    const constraint = this.anySelectorConstraint(sel, this.state.selectorOrder, this.state.mev);
-
-    const selector = {
-      'model': (
-        <ModelSelector
-          bases={meta}
-          constraint={constraint}
-          value={this.state.mev.model}
-          onChange={this.anyHandleChangeModel}
-          isSearchable
-          placeholder={'Type here to search list...'}
-          debug
-        />
-      ),
-
-      'emissions': (
-        <EmissionsScenarioSelector
-          bases={meta}
-          constraint={constraint}
-          value={this.state.mev.emissions}
-          onChange={this.anyHandleChangeEmissions}
-        />
-      ),
-
-      'variable': (
-        <VariableSelector
-          bases={meta}
-          constraint={constraint}
-          value={this.state.mev.variable}
-          onChange={this.anyHandleChangeVariable}
-        />
-      ),
+    const Selector = {
+      'model': ModelSelector,
+      'emissions': EmissionsScenarioSelector,
+      'variable': VariableSelector,
     }[sel];
+
+    const selProps = {
+      'model': {
+        onChange: this.anyHandleChangeModel,
+      },
+      'emissions': {
+        onChange: this.anyHandleChangeEmissions,
+      },
+      'variable': {
+        onChange: this.anyHandleChangeVariable,
+      },
+    }[sel];
+
+    const constraint = this.anySelectorConstraint(sel, this.state.selectorOrder, this.state.mev);
 
     return (
       <Col {...DemoMEV.colProps}>
-        {selector}
-        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].representative)}
+        <Selector
+          bases={meta}
+          constraint={constraint}
+          value={this.state.mev[sel]}
+          {...selProps}
+        />
         Input constraint: {stringify(constraint)}
+        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].representative)}
       </Col>
     );
   };
