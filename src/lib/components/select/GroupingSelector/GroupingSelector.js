@@ -63,6 +63,7 @@ import {
   isEqual,
   isArray,
   isFunction,
+  isUndefined,
   noop,
   keys, concat,
   omit,
@@ -97,6 +98,12 @@ export default class GroupingSelector extends React.Component {
     // by Select), or any other operation(s) that arrange the options
     // for presentation in Select.
 
+    replaceInvalidValue: PropTypes.func,
+    // Called when `props.value` is not a valid option.
+    // Called with list of all options.
+    // Must (eventually) return a valid value.
+    // Beware: If you always return an invalid value from this, you're screwed.
+
     value: PropTypes.any,
     // The currently selected option.
 
@@ -121,6 +128,7 @@ export default class GroupingSelector extends React.Component {
       'getOptionLabel',
       'getOptionIsDisabled',
       'arrangeOptions',
+      'replaceInvalidValue',
       'debug',
       'debugValue',
     ],
@@ -133,6 +141,30 @@ export default class GroupingSelector extends React.Component {
     getOptionIsDisabled: constant(false),
 
     arrangeOptions: options => sortBy('label')(options),
+
+    replaceInvalidValue: (value, options) => {
+      // Return first (in order of UI presentation) enabled option,
+      // or else null if no such option exists.
+      const allOptions =
+        options[0] && isArray(options[0].options) ?
+          flatMap('options')(options) :  // grouped
+          options;                       // ungrouped
+      const firstEnabledOption = find({ isDisabled: false }, allOptions);
+      console.log(`GroupingSelector[...].replaceInvalidValue: firstEnabledOption:`, firstEnabledOption)
+      // Prevent infinite update loop: If there is no enabled option and
+      // if the previous value was also undefined, return `null`.
+      // This interrupts the case where the options list repeatedly does not
+      // contain any enabled option, which does occur transiently in several
+      // situations.
+      // This will cause the value to settle on `null` for situations where
+      // we would have to wait for more than one update cycle to get a list
+      // of options containing an enabled option, but this works and it
+      // definitely prevents a known problem.
+      if (isUndefined(firstEnabledOption) && isUndefined(value)) {
+        return null;
+      }
+      return firstEnabledOption;
+    },
 
     onChange: noop,
 
@@ -149,6 +181,31 @@ export default class GroupingSelector extends React.Component {
   constructor(props) {
     super(props);
     this.log(`.cons: meta:`, objectId(props.bases), props.bases)
+  }
+
+  // Conditionally replace the provided value with a different value.
+  // The condition, `this.willReplaceValue`, and the replacement value,
+  // `this.valueToUse`, are set in `render`. The value is replaced by
+  // calling `props.onChange`. React lifecycle constraints forbid calling
+  // `onChange` (triggering a state update) in `render`; instead it must be done
+  // in `componentDidMount` or `componentDidUpdate`, where side effects are
+  // permitted.
+
+  condReplaceValue() {
+    if (this.willReplaceValue) {
+      this.log(`.condReplaceValue: replacing with option:`, this.valueToUse)
+      this.props.onChange(this.valueToUse);
+    }
+  }
+
+  componentDidMount() {
+    this.condReplaceValue();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.log(`.cDU: meta:`, objectId(this.props.bases))
+    this.log(`.componentDidMount: props.meta ${this.props.bases === prevProps.bases ? '===' : '!=='} prevProps.meta`)
+    this.condReplaceValue();
   }
 
   // Memoize computation of options list
@@ -174,7 +231,7 @@ export default class GroupingSelector extends React.Component {
   // component is rendered, which, amongst other cases, is every time a
   // selection is made. Also, this function is potentially called multiple
   // times per render, depending on the behaviour of downstream functions
-  // such as `enabledOptions` and `props.arrangeOptions`.
+  // such as `abledOptions` and `props.arrangeOptions`.
   baseOptions = memoize(
     (getOptionRepresentative, getOptionLabel, meta) =>
       flow(
@@ -193,41 +250,69 @@ export default class GroupingSelector extends React.Component {
       )(meta)
   );
 
-  // Form the list of "enabled" options from the list of metadata.
-  // An enabled option is an option with isDisabled set according to
-  // `props.getOptionIsDisabled`.
-  enabledOptions = memoize(
+  // Form the list of "abled" (enabled/disabled) options from the list of
+  // metadata. Set `isDisabled` using `props.getOptionIsDisabled`.
+  abledOptions = memoize(
     (getOptionRepresentative, getOptionLabel, getOptionIsDisabled, meta) => flow(
       tap(options => {
-        this.log(`.enabledOptions: meta:`, objectId(meta), meta, 'getOptionIsDisabled:', objectId(getOptionIsDisabled));
-        this.log(`.enabledOptions: options:`, objectId(options), options);
+        this.log(`.abledOptions: meta:`, objectId(meta), meta, 'getOptionIsDisabled:', objectId(getOptionIsDisabled));
+        this.log(`.abledOptions: options:`, objectId(options), options);
       }),
       map(option =>
         assign(option, { isDisabled: getOptionIsDisabled(option) })
       ),
-      tap(options => this.log(`.enabledOptions: result`, options))
+      tap(options => this.log(`.abledOptions: result`, options))
     )(
       // Can't curry a memoized function; have to put it into the flow manually
       this.baseOptions(getOptionRepresentative, getOptionLabel, meta)
     )
   );
 
+  // TODO: Use arrangedOptinos
+  isValidValue = (value, options) =>
+    // A option is valid if it is null or if it is (deep) equal to an
+    // enabled option.
+    // `undefined` is not a valid option
+    value === null ||
+    some(
+      option => !option.isDisabled && isEqual(value, option),
+      options
+    );
+
   render() {
     // Generate options for React Select v2 component.
     this.log(`.render: arrangedOptions: meta:`, objectId(this.props.bases), this.props.bases)
-    const arrangedOptions =
-      this.props.arrangeOptions(
-        this.enabledOptions(
-          this.props.getOptionRepresentative,
-          this.props.getOptionLabel,
-          this.props.getOptionIsDisabled,
-          this.props.bases,
-        ));
+    const abledOptions = this.abledOptions(
+      this.props.getOptionRepresentative,
+      this.props.getOptionLabel,
+      this.props.getOptionIsDisabled,
+      this.props.bases,
+    );
+    const arrangedOptions = this.props.arrangeOptions(abledOptions);
     this.log(`.render: arrangedOptions: result:`, arrangedOptions)
+
+    // Replace an invalid value (option).
+    //
+    // The following two instance properties are picked up in lifecycle hooks
+    // `componentDidMount` and `componentDidUpdate`, which call back
+    // (via `onChange`) as needed with the replaced value.
+    // We cannot call back here, because the React lifecycle requires
+    // `render` to be a pure (i.e., without side effects) function.
+    this.willReplaceValue =
+      isFunction(this.props.replaceInvalidValue) &&
+      !this.isValidValue(this.props.value, abledOptions);
+    this.log(`.render: willReplaceValue:`, this.willReplaceValue)
+
+    this.valueToUse =
+      this.willReplaceValue ?
+        this.props.replaceInvalidValue(this.props.value, arrangedOptions) :
+        this.props.value;
+    this.log(`.render: valueToUse:`, this.valueToUse)
 
     return (
       <Select
         options={arrangedOptions}
+        value={this.valueToUse}
         {...omit(GroupingSelector.propsToOmit, this.props)}
       />
     );
