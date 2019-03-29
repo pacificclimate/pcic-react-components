@@ -132,7 +132,7 @@ class DemoMEV extends Component {
     return (
       <Grid fluid>
         <Row>
-          <Col lg={12} md={12} sm={12}>
+          <Col lg={6} md={12} sm={12}>
             <p>{`
               The Model, Emissions, and Scenario selectors below are
               "cascaded": For any given selector, the selections
@@ -142,9 +142,9 @@ class DemoMEV extends Component {
               the preceding selections.
             `}</p>
             <p>{`
-              The order of theModel, Emissions, and Variable selectors
-              can be changed dynamically (with consequent changed to the
-              cascading. Click an arrow beside any selector label to
+              The order of the Model, Emissions, and Variable selectors
+              can be changed dynamically (with consequent changes to the
+              cascading). Click an arrow beside any selector label to
               change its position in the cascade (and in the UI).
             `}</p>
           </Col>

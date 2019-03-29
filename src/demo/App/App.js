@@ -12,8 +12,8 @@ import DemoMev from '../select/CE-usage/DemoMEV';
 import DemoP2A from '../select/P2A-usage/DemoP2A';
 
 const navSpec = [
-  { label: 'Grouping Selector', path: 'GroupingSelector', component: DemoGroupingSelector },
-  { label: 'Simple Constraint GS', path: 'SimpleConstraintGroupingSelector', component: DemoSimpleConstraintGroupingSelector },
+  { label: 'GS', path: 'GS', component: DemoGroupingSelector },
+  { label: 'SCGS', path: 'SCGS', component: DemoSimpleConstraintGroupingSelector },
   { label: 'Simple', path: 'Simple', component: DemoSimple },
   { label: 'MEV', path: 'MEV', component: DemoMev },
   { label: 'P2A', path: 'P2A', component: DemoP2A },

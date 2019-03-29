@@ -13,7 +13,7 @@ function stringify(obj) {
 }
 
 const selectors = [
-  { label: 'Model Selector', value: ModelSelector, foo: 'bar' },
+  { label: 'Model Selector', value: ModelSelector },
   { label: 'Emissions Scenario Selector', value: EmissionsScenarioSelector },
   { label: 'Variable Selector', value: VariableSelector },
   { label: 'Dataspec Selector', value: DataspecSelector },
@@ -37,18 +37,26 @@ export default class DemoGroupingSelector extends Component {
     return (
       <Grid fluid>
         <Row>
+          <Col lg={6}>
+            This demo exercises SimpleConstraintGroupingSelector by passing it the
+            exposed representative and label methods from a selected
+            derived selector, and ... no constraints.
+            This isn't trememdously robust to changes,
+            but it is a convenient way of exercising the base selector.
+          </Col>
+        </Row>
+        <Row>
           <Col lg={3}>
+            <h2>Derived selector providing methods</h2>
             <Select
               options={selectors}
               value={this.state.selector}
               onChange={this.handleChangeSelector}
             />
-          </Col>
-          <Col lg={3}>
-            Selector:
             {stringify(this.state.selector)}
           </Col>
           <Col lg={3}>
+            <h2>SimpleConstraintGroupingSelector</h2>
             <SimpleConstraintGroupingSelector
               bases={meta}
               getOptionRepresentative={this.state.selector.value.getOptionRepresentative}
@@ -57,9 +65,6 @@ export default class DemoGroupingSelector extends Component {
               onChange={this.handleChangeSelectorValue}
               debug={true}
             />
-          </Col>
-          <Col lg={3}>
-            Value:
             {stringify(this.state.value && this.state.value.label)}
           </Col>
         </Row>

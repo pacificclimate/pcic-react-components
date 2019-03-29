@@ -19,14 +19,14 @@ const selectors = [
 ];
 
 
-export default class DemoMEV extends Component {
+export default class DemoSimple extends Component {
   state = {
     selector: selectors[0],
-    selectorValue: null,
+    selectorValue: undefined,
   };
 
   handleChangeSelector = selector => this.setState(
-    { selector, selectorValue: null }
+    { selector, selectorValue: undefined }
   );
 
   handleChangeSelectorValue = (selectorValue) =>
@@ -37,25 +37,30 @@ export default class DemoMEV extends Component {
     return (
       <Grid fluid>
         <Row>
+          <Col lg={6}>
+            This demo exercises each derived selector separately.
+            No constraints are passed, but the selector initial values
+            are undefined, to trigger invalid-value replacement.
+          </Col>
+        </Row>
+        <Row>
           <Col lg={3}>
+            <h2>Selector to exercise</h2>
             <Select
               options={selectors}
               value={this.state.selector}
               onChange={this.handleChangeSelector}
             />
-          </Col>
-          <Col lg={3}>
             {stringify(this.state.selector.label)}
           </Col>
           <Col lg={3}>
+            <h2>Selector</h2>
             <Selector
               bases={meta}
               value={this.state.selectorValue}
               onChange={this.handleChangeSelectorValue}
               debug={true}
             />
-          </Col>
-          <Col lg={3}>
             {stringify(this.state.selectorValue && this.state.selectorValue.representative)}
           </Col>
         </Row>
