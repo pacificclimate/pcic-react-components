@@ -61,32 +61,29 @@ Renders a React Select v2 selector whose options are constructed from
 a list of basis items. 
 
 Options are constructed using a user-supplied function that maps each
-basis item to an option value (an arbitrary JS object). The mapping is permitted
-to map many basis items to a single (deep) equal value; indeed that is much of 
-the point of this component. 
+basis item to an representative value (an arbitrary JS object). 
+The mapping is permitted to map many basis items to a single (deep) equal 
+representative; indeed that is much of the point of this component. 
 
-All basis items that map to the same value are grouped together and represented
-by a single option. (Hence the name `GroupingSelector`.)
+All basis items that map to the same representative are grouped together and 
+into a single option. (Hence the name `GroupingSelector`.)
 
-Component properties allow the user to provide functions to
+Component properties allow the user to pass in functions to
+
 * compute the option label (the string presented in the UI) 
 * compute the enabled/disabled status of each option
 * sort, group, and otherwise arrange options for presentation
 * replace an invalid value (a value which does not correspond to any 
     enabled option) with a valid value
     
-**Important**: This component communicates (via props `value`, `onChange`)
-option values (the result of basis item mapping) only, not full options.
-This differs from React Select v2, which communicates full options.
-This may or may not be a wise choice.
-  
 For more details, see code comments documenting `GroupingSelector`.
 
 ##### `SimpleConstraintGroupingSelector`
 
 Renders a `GroupingSelector`, injecting an enabled/disabled function
 that enables an option if and only if the supplied constraint value 
-(a JS object) matches one of the basis items that mapped to the option's value. 
+(a JS object) matches one of the basis items that mapped to the option's 
+representative value. 
 
 This particular pattern is
 used in most of the CE selectors (see below) and makes it particularly easy
@@ -107,7 +104,8 @@ These selectors handle as bases the Climate Explorer backend metadata
 
 Selector options are the (unique) models found in the input metadata.
 
-Selector value is a string containing the `model_id` (from CE metadata).
+Item representative is an object containing the `model_id` property 
+(from CE metadata).
 
 
 ##### `EmissionsScenarioSelector`
@@ -117,13 +115,14 @@ Selector options are the (unique) emissions scenarios found the input metadata.
 Emissions scenarios are presented in more human-readable format 
 (e.g., encoding "historical, rcp45" is presented as "Historical, then RCP 4.5").
 
-Selector value is a string containing the `experiment` (from CE metadata).
+Item representative is an object containing the `experiment` property
+(from CE metadata).
 
 ##### `VariableSelector`
 
 Selector options are the (unique) variables found the input metadata. 
 
-Each option is characterized by a unique set of
+Each option representative is a unique set of
 values for the following subset of CE metadata values:
 
 ```js
@@ -149,13 +148,11 @@ a variable.
 Options are grouped by `multi_year_mean`. 
 Each option bears an icon denoting the value of `multi_year_mean`.
 
-Selector value is an object of the shape above.
-
 ##### `DataspecSelector`
 
 Selector options are the (unique) "dataspecs" found the input metadata. 
 
-Each option is characterized by a unique set of
+Each option representative is a unique set of
 values for the following subset of CE metadata values:
 
 ```js
@@ -169,13 +166,11 @@ values for the following subset of CE metadata values:
 Unique values of `ensemble_member` (which are run codes such as "r1i1p1") 
 are mapped to the more human-friendly form "Run 1", "Run 2", etc.
 
-Selector value is an object of the shape above.
-
 ##### `TimePeriodSelector`
 
 Selector options are the (unique) time periods found in the input metadata.
 
-Each option is characterized by a unique set of
+Each option representative is a unique set of
 values for the following subset of CE metadata values:
 
 ```js
@@ -184,8 +179,6 @@ values for the following subset of CE metadata values:
   end_date: String,
 }
 ```
-
-Selector value is an object of the shape above.
 
 
 ## Contributing and "publishing"
@@ -213,7 +206,7 @@ When you modify this package (i.e., when you modify the contents of the
 
 1. Make sure you export any new or renamed components in `src/lib/index.js`.
 
-1. When all modifications have been completed, commit the code.
+1. When all modifications have been completed, merge the branch or PR.
 
 1. On the command line, `npm run build`. 
 

@@ -4,7 +4,7 @@ import React from 'react';
 import './SimpleConstraintGroupingSelector.css';
 import { isMatch, some, omit, concat, keys } from 'lodash/fp';
 import memoize from 'memoize-one';
-import MetadataSelector from '../GroupingSelector';
+import GroupingSelector from '../GroupingSelector';
 
 
 export default class SimpleConstraintGroupingSelector extends React.Component {
@@ -12,7 +12,7 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
     bases: PropTypes.array.isRequired,
     // List of basis items the selector will build its options from.
 
-    getOptionValue: PropTypes.func.isRequired,
+    getOptionRepresentative: PropTypes.func.isRequired,
     // Maps a basis item to the `value` property of an option.
     // This function can map many basis items to the same value;
     // GroupingSelector collects all basis items with the same
@@ -37,12 +37,6 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
     onChange: PropTypes.func,
     // Called when a different option is selected.
 
-    replaceInvalidValue: PropTypes.func,
-    // Called when value passed in is not a valid value.
-    // Called with list of all options.
-    // Must return a valid value.
-    // Beware: If you always return an invalid value from this, you're screwed.
-
     debug: PropTypes.bool,
     debugValue: PropTypes.any,
     // For debugging, what else?
@@ -53,7 +47,7 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
   // All props not named here are passed through to the rendered component.
   static propsToOmit = ['getOptionIsDisabled', 'constraint'];
 
-  makeGetOptionIsDisabled = memoize(constraint => (
+  makeGetOptionIsDisabled = memoize(constraint =>
     // Returns a `getOptionIsDisabled` function based on the passed in
     // constraint. It is important that the function be a distinct function
     // for each constraint, instead of the same function (object) that closes
@@ -68,14 +62,13 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
     //
     // This function is memoized to eliminate false signals that the constraint
     // has changed.
-    option => !some(
-      context => isMatch(this.props.constraint, context)
-    )(option.contexts)
-  ));
+    option =>
+      !some(context => isMatch(constraint, context))(option.contexts)
+  );
 
   render() {
     return (
-      <MetadataSelector
+      <GroupingSelector
         getOptionIsDisabled={this.makeGetOptionIsDisabled(this.props.constraint)}
         {...omit(SimpleConstraintGroupingSelector.propsToOmit, this.props)}
       />

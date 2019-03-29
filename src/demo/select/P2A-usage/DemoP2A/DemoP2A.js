@@ -61,7 +61,7 @@ class DemoP2A extends Component {
               value={this.state.timePeriod}
               onChange={this.handleChangeTimePeriod}
             />
-            {stringify(this.state.timePeriod)}
+            {stringify(this.state.timePeriod && this.state.timePeriod.representative)}
           </Col>
           <Col {...DemoP2A.colProps}>
             <h2>Variable</h2>
@@ -70,7 +70,7 @@ class DemoP2A extends Component {
               value={this.state.variable}
               onChange={this.handleChangeVariable}
             />
-            {stringify(this.state.variable)}
+            {stringify(this.state.variable && this.state.variable.representative)}
           </Col>
         </Row>
 

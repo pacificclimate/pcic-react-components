@@ -31,7 +31,7 @@ export default class DataspecSelector extends Component {
 
   static valueProps =
     'start_date end_date ensemble_member'.split(' ');
-  static getOptionValue = metadatum =>
+  static getOptionRepresentative = metadatum =>
     pick(DataspecSelector.valueProps, metadatum);
 
   // Return an object mapping `ensemble_member` (r-i-p) values to more
@@ -49,15 +49,21 @@ export default class DataspecSelector extends Component {
 
   // Return an option label including the user-friendly 'Run <n>' names
   // for ensemble_member values.
-  getOptionLabel = ({ value: { start_date, end_date, ensemble_member }}) => {
+  getOptionLabel =
+    ({ representative: { start_date, end_date, ensemble_member }}) =>
+  {
     const eMT = DataspecSelector.ensembleMemberTranslation(this.props.bases);
     return `${eMT[ensemble_member]} (${ensemble_member}), ${start_date}–${end_date}`;
   };
-  
-  render() {
+
+  static getOptionLabel =
+    ({ representative: { start_date, end_date, ensemble_member }}) =>
+      `${ensemble_member}, ${start_date}–${end_date}`;
+
+    render() {
     return (
       <SimpleConstraintGroupingSelector
-        getOptionValue={DataspecSelector.getOptionValue}
+        getOptionRepresentative={DataspecSelector.getOptionRepresentative}
         getOptionLabel={this.getOptionLabel}
         {...this.props}
       />

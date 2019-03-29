@@ -14,17 +14,17 @@ export default class VariableSelector extends Component {
 
   static valueProps =
     'variable_id variable_name'.split(' ');
-  static getOptionValue = metadatum =>
+  static getOptionRepresentative = metadatum =>
     pick(VariableSelector.valueProps, metadatum);
 
-  static getOptionLabel = ({ value: { variable_id, variable_name }}) =>
+  static getOptionLabel = ({ representative: { variable_id, variable_name }}) =>
     `${variable_id} - ${variable_name}`;
 
   render() {
     return (
       <SimpleConstraintGroupingSelector
         {...this.props}
-        getOptionValue={VariableSelector.getOptionValue}
+        getOptionRepresentative={VariableSelector.getOptionRepresentative}
         getOptionLabel={VariableSelector.getOptionLabel}
         debugValue='Variable'
       />

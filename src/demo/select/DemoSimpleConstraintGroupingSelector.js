@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import SimpleConstraintGroupingSelector from '../../lib/components/select/SimpleConstraintGroupingSelector';
+import ModelSelector from '../../lib/components/select/ModelSelector';
+import meta from './assets/meta';
 import Select from 'react-select';
 import VariableSelector from '../../lib/components/select/VariableSelector';
-import ModelSelector from '../../lib/components/select/ModelSelector';
 import EmissionsScenarioSelector from '../../lib/components/select/EmissionsScenarioSelector';
 import DataspecSelector from '../../lib/components/select/DataspecSelector';
-import meta from './assets/meta';
 
 function stringify(obj) {
   return <pre>{JSON.stringify(obj, null, 2)}</pre>;
@@ -19,49 +20,52 @@ const selectors = [
 ];
 
 
-export default class DemoSimple extends Component {
+export default class DemoGroupingSelector extends Component {
   state = {
-    selector: selectors[0],
-    selectorValue: undefined,
+    selector: selectors[1],
+    value: null,
   };
 
   handleChangeSelector = selector => this.setState(
-    { selector, selectorValue: undefined }
+    { selector, value: null }
   );
 
-  handleChangeSelectorValue = (selectorValue) =>
-    this.setState({ selectorValue });
+  handleChangeSelectorValue = (value) =>
+    this.setState({ value });
 
   render() {
-    const Selector = this.state.selector.value;
     return (
       <Grid fluid>
         <Row>
           <Col lg={6}>
-            This demo exercises each derived selector separately.
-            No constraints are passed, but the selector initial values
-            are undefined, to trigger invalid-value replacement.
+            This demo exercises SimpleConstraintGroupingSelector by passing it the
+            exposed representative and label methods from a selected
+            derived selector, and ... no constraints.
+            This isn't trememdously robust to changes,
+            but it is a convenient way of exercising the base selector.
           </Col>
         </Row>
         <Row>
           <Col lg={3}>
-            <h2>Selector to exercise</h2>
+            <h2>Derived selector providing methods</h2>
             <Select
               options={selectors}
               value={this.state.selector}
               onChange={this.handleChangeSelector}
             />
-            {stringify(this.state.selector.label)}
+            {stringify(this.state.selector)}
           </Col>
           <Col lg={3}>
-            <h2>Selector</h2>
-            <Selector
+            <h2>SimpleConstraintGroupingSelector</h2>
+            <SimpleConstraintGroupingSelector
               bases={meta}
-              value={this.state.selectorValue}
+              getOptionRepresentative={this.state.selector.value.getOptionRepresentative}
+              getOptionLabel={this.state.selector.value.getOptionLabel}
+              value={this.state.value}
               onChange={this.handleChangeSelectorValue}
               debug={true}
             />
-            {stringify(this.state.selectorValue && this.state.selectorValue.representative)}
+            {stringify(this.state.value && this.state.value.label)}
           </Col>
         </Row>
       </Grid>

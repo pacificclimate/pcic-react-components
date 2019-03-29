@@ -13,3 +13,7 @@ export { default as TimePeriodSelector }
   from './components/select/TimePeriodSelector';
 export { default as VariableSelector }
   from './components/select/VariableSelector';
+
+// Utilities
+export * as fp from './utils/fp';
+export * as select from './utils/select';

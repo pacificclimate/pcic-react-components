@@ -14,21 +14,20 @@
     "build": "rimraf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
     "lodash": "^4.17.11",
     "memoize-one": "^5.0.0",
     "prop-types": "^15.6.2",
-    "react-bootstrap": "^0.32.4",
     "react-select": "^2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
     "@babel/preset-react": "^7.0.0",
-    "babel-cli": "^6.26.0",
-    "babel-preset-react-app": "^7.0.0",
+    "bootstrap": "^3.3.7",
     "react": "^16.7.0",
+    "react-bootstrap": "^0.32.4",
     "react-dom": "^16.7.0",
     "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.3.1",
