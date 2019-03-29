@@ -213,7 +213,7 @@ When you modify this package (i.e., when you modify the contents of the
 
 1. Make sure you export any new or renamed components in `src/lib/index.js`.
 
-1. When all modifications have been completed, commit the code.
+1. When all modifications have been completed, merge the branch or PR.
 
 1. On the command line, `npm run build`. 
 
