@@ -2,10 +2,11 @@ module.exports = function (api) {
   api.cache(true);
   return {
     "presets": [
-      ["react-app", { "absoluteRuntime": false }]
+      ["@babel/preset-react", { "absoluteRuntime": false }]
     ],
     "plugins": [
-      ["@babel/plugin-proposal-class-properties", { "loose": true }]
+      ["@babel/plugin-proposal-class-properties", { "loose": true }],
+      ["@babel/plugin-proposal-export-namespace-from"]
     ]
   };
 };
