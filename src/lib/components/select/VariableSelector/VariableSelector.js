@@ -7,7 +7,7 @@ import { components } from 'react-select';
 const arrangeOptions = options => {
   return [
     {
-      label: 'Multi-Year Mean Datasets',
+      label: 'Multi-Year Statistic Datasets',
       options: flow(
         filter(o => o.representative.multi_year_mean),
         sortBy('label'),
@@ -24,14 +24,17 @@ const arrangeOptions = options => {
 };
 
 
-const Option = props => {
-  return (
-    <components.Option {...props}>
-      {props.data.representative.multi_year_mean ? 'MYM' : 'TS'}
+const makeMenuItem = Wrapper =>
+  props => (
+    <Wrapper {...props}>
+      {props.data.representative.multi_year_mean ? '(MY)' : '(TS)'}
       {' '}
       {props.data.label}
-    </components.Option>
-  )};
+    </Wrapper>
+  );
+
+const Option = makeMenuItem(components.Option);
+const SingleValue = makeMenuItem(components.SingleValue);
 
 
 const VariableSelector = makeStandardSelector({
@@ -41,7 +44,7 @@ const VariableSelector = makeStandardSelector({
     getOptionLabel: ({ representative: { variable_id, variable_name }}) =>
       `${variable_id} - ${variable_name}`,
     arrangeOptions,
-    components: { Option },
+    components: { Option, SingleValue },
   }
 });
 
