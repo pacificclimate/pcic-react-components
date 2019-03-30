@@ -2,19 +2,25 @@ import React from 'react';
 import { makeStandardSelector } from '../makeStandardSelector';
 import { flow, filter, sortBy } from 'lodash/fp';
 import { components } from 'react-select';
+import { TiChartLine, TiFilter } from 'react-icons/ti';
+import { MdTimeline } from 'react-icons/md'
+
+
+const multiYearIcon = <TiFilter/>;
+const timeSeriesIcon = <MdTimeline/>;
 
 
 const arrangeOptions = options => {
   return [
     {
-      label: 'Multi-Year Statistic Datasets',
+      label: <span>{multiYearIcon} Multi-Year Statistic Datasets</span>,
       options: flow(
         filter(o => o.representative.multi_year_mean),
         sortBy('label'),
       )(options),
     },
     {
-      label: 'Time Series Datasets',
+      label: <span>{timeSeriesIcon} Time Series Datasets</span>,
       options: flow(
         filter(o => !o.representative.multi_year_mean),
         sortBy('label'),
@@ -27,7 +33,11 @@ const arrangeOptions = options => {
 const makeMenuItem = Wrapper =>
   props => (
     <Wrapper {...props}>
-      {props.data.representative.multi_year_mean ? '(MY)' : '(TS)'}
+      {
+        props.data.representative.multi_year_mean ?
+          multiYearIcon :
+          timeSeriesIcon
+      }
       {' '}
       {props.data.label}
     </Wrapper>
