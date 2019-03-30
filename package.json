@@ -17,6 +17,7 @@
     "lodash": "^4.17.11",
     "memoize-one": "^5.0.0",
     "prop-types": "^15.6.2",
+    "react-icons": "^3.5.0",
     "react-select": "^2.3.0"
   },
   "devDependencies": {
