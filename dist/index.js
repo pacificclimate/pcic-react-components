@@ -5,4 +5,9 @@ export { default as GroupingSelector } from './components/select/GroupingSelecto
 export { default as ModelSelector } from './components/select/ModelSelector';
 export { default as SimpleConstraintGroupingSelector } from './components/select/SimpleConstraintGroupingSelector';
 export { default as TimePeriodSelector } from './components/select/TimePeriodSelector';
-export { default as VariableSelector } from './components/select/VariableSelector';
+export { default as VariableSelector } from './components/select/VariableSelector'; // Utilities
+
+import * as _fp from './utils/fp';
+export { _fp as fp };
+import * as _select from './utils/select';
+export { _select as select };
