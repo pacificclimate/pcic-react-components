@@ -1,6 +1,12 @@
 # News / Release Notes
 
 
+## 2.0.1
+
+*2019-Mar-29*
+
+* Add utils/select, components/select/makeStandardSelector to the distribution.
+
 ## 2.0.0
 
 *2019-Mar-29*
