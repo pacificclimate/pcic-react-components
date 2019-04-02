@@ -15,7 +15,7 @@ const formatPart = part => {
   }
 };
 
-const getOptionLabel = option => flow(split(/\s*,\s*/), map(formatPart), join(', then '))(option.representative.experiment);
+const getOptionLabel = option => flow(split(/\s*,\s*/), map(formatPart), join(', then '))(option.value.representative.experiment);
 
 const EmissionsScenarioSelector = makeStandardSelector({
   defaultDebugValue: 'Emissions',

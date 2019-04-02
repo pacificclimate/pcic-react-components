@@ -4,9 +4,11 @@ const TimePeriodSelector = makeStandardSelector({
   representativeProps: 'start_date end_date'.split(' '),
   selectorProps: {
     getOptionLabel: ({
-      representative: {
-        start_date,
-        end_date
+      value: {
+        representative: {
+          start_date,
+          end_date
+        }
       }
     }) => `${start_date}-${end_date}`
   }

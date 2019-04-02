@@ -1,6 +1,13 @@
 # News / Release Notes
 
 
+## 3.0.0
+
+*2019-Apr-02*
+
+* [Fix option backgrounds](https://github.com/pacificclimate/pcic-react-components/issues/10). 
+  This is a breaking change: option object content has changed. 
+
 ## 2.0.1
 
 *2019-Mar-29*

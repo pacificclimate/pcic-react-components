@@ -11,10 +11,12 @@ export default class DataspecSelector extends Component {
     super(...args);
 
     this.getOptionLabel = ({
-      representative: {
-        start_date,
-        end_date,
-        ensemble_member
+      value: {
+        representative: {
+          start_date,
+          end_date,
+          ensemble_member
+        }
       }
     }) => {
       const eMT = DataspecSelector.ensembleMemberTranslation(this.props.bases);
@@ -52,9 +54,11 @@ DataspecSelector.getOptionRepresentative = metadatum => pick(DataspecSelector.va
 DataspecSelector.ensembleMemberTranslation = meta => flow(map('ensemble_member'), uniq, mapWithKey((ensemble_member, i) => [ensemble_member, `Run ${i + 1}`]), fromPairs)(meta);
 
 DataspecSelector.getOptionLabel = ({
-  representative: {
-    start_date,
-    end_date,
-    ensemble_member
+  value: {
+    representative: {
+      start_date,
+      end_date,
+      ensemble_member
+    }
   }
 }) => `${ensemble_member}, ${start_date}–${end_date}`;
