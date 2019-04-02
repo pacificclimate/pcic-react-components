@@ -142,7 +142,7 @@ export default class GroupingSelector extends React.Component {
   );
 
   static defaultProps = {
-    getOptionLabel: option => option.representative.toString(),
+    getOptionLabel: option => option.value.representative.toString(),
 
     getOptionIsDisabled: constant(false),
 
@@ -245,8 +245,10 @@ export default class GroupingSelector extends React.Component {
         })),
         groupByGeneral(({ representative }) => representative),
         map(group => ({
-          contexts: map(item => item.context)(group.items),
-          representative: group.by,
+          value: {
+            contexts: map(item => item.context)(group.items),
+            representative: group.by,
+          },
         })),
         map(option => assign(option, { label: getOptionLabel(option) })),
         // tap(m => this.log(`.baseOptions`, m)),

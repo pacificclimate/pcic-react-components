@@ -15,14 +15,14 @@ const arrangeOptions = options => {
     {
       label: <span>{multiYearIcon} Multi-Year Statistic Datasets</span>,
       options: flow(
-        filter(o => o.representative.multi_year_mean),
+        filter(o => o.value.representative.multi_year_mean),
         sortBy('label'),
       )(options),
     },
     {
       label: <span>{timeSeriesIcon} Time Series Datasets</span>,
       options: flow(
-        filter(o => !o.representative.multi_year_mean),
+        filter(o => !o.value.representative.multi_year_mean),
         sortBy('label'),
       )(options),
     },
@@ -34,7 +34,7 @@ const makeMenuItem = Wrapper =>
   props => (
     <Wrapper {...props}>
       {
-        props.data.representative.multi_year_mean ?
+        props.data.value.representative.multi_year_mean ?
           multiYearIcon :
           timeSeriesIcon
       }
@@ -51,7 +51,7 @@ const VariableSelector = makeStandardSelector({
   defaultDebugValue: 'Variable',
   representativeProps: 'variable_id variable_name multi_year_mean'.split(' '),
   selectorProps: {
-    getOptionLabel: ({ representative: { variable_id, variable_name }}) =>
+    getOptionLabel: ({ value: { representative: { variable_id, variable_name }}}) =>
       `${variable_id} - ${variable_name}`,
     arrangeOptions,
     components: { Option, SingleValue },

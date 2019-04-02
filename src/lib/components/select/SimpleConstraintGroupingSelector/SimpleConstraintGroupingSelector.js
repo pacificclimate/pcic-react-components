@@ -63,7 +63,7 @@ export default class SimpleConstraintGroupingSelector extends React.Component {
     // This function is memoized to eliminate false signals that the constraint
     // has changed.
     option =>
-      !some(context => isMatch(constraint, context))(option.contexts)
+      !some(context => isMatch(constraint, context))(option.value.contexts)
   );
 
   render() {
