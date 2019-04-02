@@ -105,8 +105,13 @@ These selectors handle as bases the Climate Explorer backend metadata
 Selector options are the (unique) models found in the input metadata.
 
 Item representative is an object containing the `model_id` property 
-(from CE metadata).
+(from CE metadata):
 
+```js
+{
+  model_id: String,
+}
+```
 
 ##### `EmissionsScenarioSelector`
 
@@ -116,7 +121,13 @@ Emissions scenarios are presented in more human-readable format
 (e.g., encoding "historical, rcp45" is presented as "Historical, then RCP 4.5").
 
 Item representative is an object containing the `experiment` property
-(from CE metadata).
+(from CE metadata):
+
+```js
+{
+  experiment: String,
+}
+```
 
 ##### `VariableSelector`
 

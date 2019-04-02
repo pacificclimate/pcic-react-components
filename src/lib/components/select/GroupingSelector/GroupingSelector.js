@@ -17,24 +17,36 @@
 //    the function that maps basis item to representative.
 //
 //  - Each unique representative becomes an option in the selector.
-//    An option is an object containing the following properties:
-//
-//      - `representative`: The representative.
-//
-//      - `contexts`: The list of all basis items which mapped to the option's
-//        representative.
+//    An option is an object containing the following properties, following
+//    React Select v2:
 //
 //      - `isDisabled`: Set to `true` if the option is disabled.
 //
 //        The user supplies the function `getOptionIsDisabled` that maps an
 //        option to the value for `isDisabled`. This function can refer to
-//        `option.value` and `option.contexts`. By default,
-//        `getOptionIsDisabled` always returns `false` (option enabled).
+//        `option.value` and `option.contexts`.
+//
+//        By default, `getOptionIsDisabled` always returns `false`
+//        (option enabled).
 //
 //      - `label`: The string presented to the user to represent the option.
 //
-//        The user supplies the function that maps an option to the label
-//        string.
+//        The user supplies the function `getOptionLabel` that maps an option
+//        to the label string.
+//
+//      - `value`: Additional data associated with the option.
+//
+//        This can be any JS value. We use it to carry the information
+//        necessary to make these selectors work. It is an object containing
+//        the following properties:
+//
+//          - `representative`: The representative (a JS object).
+//
+//            The user supplies the function `getOptionRepresentative` that
+//            maps a basis list element to a representative value.
+//
+//          - `contexts`: The list of all basis items which mapped to the
+//            option's representative.
 //
 //  - The list of generated options is finally passed through a user-supplied
 //    function `arrangeOptions` that can be used to sort options, form option
