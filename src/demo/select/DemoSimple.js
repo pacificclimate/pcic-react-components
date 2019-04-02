@@ -61,7 +61,7 @@ export default class DemoSimple extends Component {
               onChange={this.handleChangeSelectorValue}
               debug={true}
             />
-            {stringify(this.state.selectorValue && this.state.selectorValue.representative)}
+            {stringify(this.state.selectorValue && this.state.selectorValue.value.representative)}
           </Col>
         </Row>
       </Grid>

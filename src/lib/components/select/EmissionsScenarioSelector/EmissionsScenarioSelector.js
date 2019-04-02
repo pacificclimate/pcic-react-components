@@ -24,7 +24,7 @@ const getOptionLabel = option => (
     split(/\s*,\s*/),
     map(formatPart),
     join(', then '),
-  )(option.representative.experiment)
+  )(option.value.representative.experiment)
 );
 
 const EmissionsScenarioSelector = makeStandardSelector({

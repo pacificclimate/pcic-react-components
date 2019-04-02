@@ -51,6 +51,7 @@ export default class DemoGroupingSelector extends Component {
               options={selectors}
               value={this.state.selector}
               onChange={this.handleChangeSelector}
+              menuIsOpen
             />
             {stringify(this.state.selector)}
           </Col>
@@ -63,6 +64,7 @@ export default class DemoGroupingSelector extends Component {
               value={this.state.value}
               onChange={this.handleChangeSelectorValue}
               debug={true}
+              menuIsOpen
             />
             {stringify(this.state.value && this.state.value.label)}
           </Col>

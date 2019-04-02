@@ -4,7 +4,7 @@ const ModelSelector = makeStandardSelector({
   defaultDebugValue: 'Model',
   representativeProps: ['model_id'],
   selectorProps: {
-    getOptionLabel: option => option.representative.model_id,
+    getOptionLabel: option => option.value.representative.model_id,
   },
 });
 
