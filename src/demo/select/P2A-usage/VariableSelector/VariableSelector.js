@@ -17,7 +17,7 @@ export default class VariableSelector extends Component {
   static getOptionRepresentative = metadatum =>
     pick(VariableSelector.valueProps, metadatum);
 
-  static getOptionLabel = ({ representative: { variable_id, variable_name }}) =>
+  static getOptionLabel = ({ value: { representative: { variable_id, variable_name }}}) =>
     `${variable_id} - ${variable_name}`;
 
   render() {
