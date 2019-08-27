@@ -10,6 +10,7 @@ import DemoSimpleConstraintGroupingSelector from '../select/DemoSimpleConstraint
 import DemoSimple from '../select/DemoSimple';
 import DemoMev from '../select/CE-usage/DemoMEV';
 import DemoP2A from '../select/P2A-usage/DemoP2A';
+import DemoTimeOfYear from '../select/CE-usage/DemoTimeOfYear';
 
 const navSpec = [
   { label: 'GS', path: 'GS', component: DemoGroupingSelector },
@@ -17,6 +18,7 @@ const navSpec = [
   { label: 'Simple', path: 'Simple', component: DemoSimple },
   { label: 'MEV', path: 'MEV', component: DemoMev },
   { label: 'P2A', path: 'P2A', component: DemoP2A },
+  { label: 'ToY', path: 'ToY', component: DemoTimeOfYear },
 ];
 
 
