@@ -232,7 +232,7 @@ When you modify this package (i.e., when you modify the contents of the
 
    A successful build on changed `src/lib` content will cause files in the `dist/` subtree to be modified. 
 
-1. Commit the changes in `dist/`.
+1. Commit the changes in `dist/`. (Make sure you add any newly built items to the repo.)
 
 1. Increment `version` in `package.json`.
 

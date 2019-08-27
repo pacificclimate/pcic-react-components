@@ -1,6 +1,14 @@
 # News / Release Notes
 
 
+## 3.1.0
+
+*2019-Aug-27*
+
+* Add component `TimeOfYearSelector`
+* Add component `SelectWithValueReplacement`
+* Add HOC `withValueReplacement`
+
 ## 3.0.0
 
 *2019-Apr-02*

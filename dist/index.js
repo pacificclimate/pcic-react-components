@@ -3,9 +3,13 @@ export { default as DataspecSelector } from './components/select/DataspecSelecto
 export { default as EmissionsScenarioSelector } from './components/select/EmissionsScenarioSelector';
 export { default as GroupingSelector } from './components/select/GroupingSelector';
 export { default as ModelSelector } from './components/select/ModelSelector';
+export { default as SelectWithValueReplacement } from './components/select/SelectWithValueReplacement';
 export { default as SimpleConstraintGroupingSelector } from './components/select/SimpleConstraintGroupingSelector';
+export { default as TimeOfYearSelector } from './components/select/TimeOfYearSelector';
 export { default as TimePeriodSelector } from './components/select/TimePeriodSelector';
-export { default as VariableSelector } from './components/select/VariableSelector'; // Utilities
+export { default as VariableSelector } from './components/select/VariableSelector'; // HOCs
+
+export { default as withValueReplacement } from './HOCs/withValueReplacement'; // Utilities
 
 import * as _fp from './utils/fp';
 export { _fp as fp };
