@@ -1,0 +1,6 @@
+{
+  "name": "SelectWithValueReplacement",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SelectWithValueReplacement.js"
+}
