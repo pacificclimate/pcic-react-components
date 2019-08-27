@@ -7,6 +7,7 @@
     "dist"
   ],
   "scripts": {
+    "reinstall": "rm -rf ./node_modules; npm install",
     "start": "react-scripts start",
     "build-examples": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
