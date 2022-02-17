@@ -9,6 +9,9 @@ const formattedPart = {
   rcp26: 'RCP 2.6',
   rcp45: 'RCP 4.5',
   rcp85: 'RCP 8.5',
+  ssp126: 'SSP 1-2.6',
+  ssp245: 'SSP 2-4.5',
+  ssp585: 'SSP 5-8.5',
 };
 
 const formatPart = part => {
