@@ -63208,5 +63208,47 @@
     "ensemble_member": "r1i1p1",
     "timescale": "yearly",
     "multi_year_mean": true
+  },
+  {
+    "unique_id": "tasmax_aClimMean_BCCAQv2_ACCESS-CM2_historical-ssp126_r1i1p1f1_20400101-20691231_Canada",
+    "variable_id": "tasmax",
+    "start_date": "2040",
+    "end_date": "2069",
+    "experiment": "historical, ssp126",
+    "variable_name": "Daily Maximum Near-Surface Air Temperature",
+    "institution": "PCIC",
+    "model_id": "ACCESS-CM2",
+    "model_name": null,
+    "ensemble_member": "r1i1p1f1",
+    "timescale": "yearly",
+    "multi_year_mean": true
+  },
+  {
+    "unique_id": "pr_aClimMean_BCCAQv2_EC-Earth3-Veg_historical-ssp245_r1i1p1f1_19610101-19901231_Canada",
+    "variable_id": "pr",
+    "start_date": "1961",
+    "end_date": "1990",
+    "experiment": "historical, ssp245",
+    "variable_name": "Precipitation",
+    "institution": "PCIC",
+    "model_id": "EC-Earth3-Veg",
+    "model_name": null,
+    "ensemble_member": "r1i1p1f1",
+    "timescale": "yearly",
+    "multi_year_mean": true
+  },
+  {
+    "unique_id": "tasmin_mClimMean_BCCAQv2_CMCC-ESM2_historical-ssp585_r1i1p1f1_20100101-20391231_Canada",
+    "variable_id": "tasmin",
+    "start_date": "2010",
+    "end_date": "2039",
+    "experiment": "historical, ssp585",
+    "variable_name": "Daily Minimum Near-Surface Air Temperature",
+    "institution": "PCIC",
+    "model_id": "CMCC-ESM2",
+    "model_name": null,
+    "ensemble_member": "r1i1p1f1",
+    "timescale": "yearly",
+    "multi_year_mean": true
   }
 ]
