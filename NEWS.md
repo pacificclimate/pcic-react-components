@@ -1,5 +1,10 @@
 # News / Release Notes
 
+## 3.1.1
+
+*2022-Feb-22*
+
+* Add SSP emissions scenarios to `EmissionsScenarioSelector` component
 
 ## 3.1.0
 
