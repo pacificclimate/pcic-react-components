@@ -292,3 +292,36 @@ we chose what appears to be the simplest, implemented through
 [`create-component-lib`](https://www.npmjs.com/package/create-component-lib).
 
 With a small amount of tweaking, this worked out.
+
+## Dockerized demo
+
+We need demonstrate this package to non-PCIC people.
+To do so, we created Docker infrastructure for running it.
+The Docker image is built manually on whatever server will host the demo.
+The commands for building and running the image are wrapped up in a Makefile;
+the Makefile uses `docker-compose` to handle Docker operations.
+
+The Makefile defines two variables that configure the demo:
+
+- `port`: External port to which container maps demo app.
+- `public_url`: URL from which demo will ultimately be accessed.
+
+These two variables are given default values; update them in the Makefile
+according to the deployment you wish to make. No need to commit these
+changes to the repo.
+
+### To build the image: 
+
+1. Clone this repo.
+2. Run `make image`.
+3. An image named `pcic/pcic-react-components-demo` (with no further tagging)
+   is created.
+
+### To run the demo:
+
+1. Update the Makefile configuration variables.
+2. Run `make up`.
+
+### To stop the demo:
+
+Run `make down`.
