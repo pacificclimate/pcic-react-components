@@ -219,7 +219,7 @@ When you modify this package (i.e., when you modify the contents of the
 
 1. When all modifications have been completed, merge the branch or PR.
 
-1. On the command line, `npm run build`. 
+1. On the command line, `npm run build:library`. 
 
    A successful build will output something like the following:
 
