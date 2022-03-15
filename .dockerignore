@@ -1,0 +1,9 @@
+.gitignore
+.git
+.idea
+build
+dist
+node_modules
+**/*.env*
+**/*.md
+Makefile

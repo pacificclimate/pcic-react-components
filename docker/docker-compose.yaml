@@ -14,9 +14,14 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
+      args:
+        - PUBLIC_URL=${PRC_PUBLIC_URL}
     image: pcic/pcic-react-components-demo
     container_name: pcic-react-components-demo
-    environment:
-      - PUBLIC_URL=${PRC_PUBLIC_URL}
     ports:
       - "${PRC_PORT}:3000"
+    # Optional: Uncomment to override the default entrypoint
+#    volumes:
+#      - type: bind
+#        source: ./entrypoint.sh
+#        target: /app/docker/entrypoint.sh

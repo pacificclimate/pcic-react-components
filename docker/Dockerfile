@@ -19,13 +19,17 @@ WORKDIR /app
 RUN chown node /app
 
 ENV PATH /app/node_modules/.bin:$PATH
+
+# PUBLIC_URL has to be set at *build* time. We build in this Dockerfile.
+ARG PUBLIC_URL
+ENV PUBLIC_URL $PUBLIC_URL
 ADD --chown=node:node  . /app
 
-RUN npm install --quiet
-#RUN npm install -g serve
-#ADD --chown=node:node . /app
+RUN npm install --quiet && \
+    npm install -g serve
 
 EXPOSE 3000
 
 USER node
+RUN npm run build:app
 ENTRYPOINT ./docker/entrypoint.sh
