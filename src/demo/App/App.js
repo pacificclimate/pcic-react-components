@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
@@ -23,15 +22,20 @@ const navSpec = [
 
 
 export default class Template extends React.Component {
-  static propTypes = {
-  };
-
-  state = {
-  };
-
   render() {
+    let publicUrl = process.env.PUBLIC_URL || process.env.REACT_APP_PUBLIC_URL;
+    console.log("### publicUrl", publicUrl)
+    let pathname;
+    try {
+      pathname = new URL(publicUrl).pathname || "/";
+    } catch (e) {
+      console.log("### URL parse error", e)
+      pathname = "/";
+    }
+    let basename = `${pathname}#`;
+    console.log("### basename", basename)
     return (
-      <Router basename={'/#'}>
+      <Router basename={basename}>
         <div>
           <h1>pcic-react-components</h1>
           <Navbar fluid>
