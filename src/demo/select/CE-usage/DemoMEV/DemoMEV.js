@@ -90,9 +90,11 @@ class DemoMEV extends Component {
 
     return (
       <Col {...DemoMEV.colProps}>
+        <h2>Input constraint</h2>
         <div style={{height: '10em'}}>
-          Input constraint: {stringify(constraint)}
+          {stringify(constraint)}
         </div>
+        <h2>Selector</h2>
         <Selector
           bases={meta}
           constraint={constraint}
@@ -101,7 +103,10 @@ class DemoMEV extends Component {
           debugValue={sel}
           {...selProps}
         />
-        Value: {stringify(this.state.mev[sel] && this.state.mev[sel].value.representative)}
+        <h2>Value</h2>
+        <p>
+          {stringify(this.state.mev[sel] && this.state.mev[sel].value.representative)}
+        </p>
       </Col>
     );
   };
@@ -129,13 +134,14 @@ class DemoMEV extends Component {
       <Grid fluid>
         <Row>
           <Col lg={6} md={12} sm={12}>
+            <h1>Model, Emissions, Scenario selectors</h1>
             <p>{`
               The Model, Emissions, and Scenario selectors below are
               "cascaded": For any given selector, the selections
-              in all preceding selectors determines which options are
+              in all selectors to the left determines which options are
               enabled. An option is enabled if there is at least one
               metadata item that it would select in combination with
-              the preceding selections.
+              the upstream selections.
             `}</p>
             <p>{`
               The order of the Model, Emissions, and Variable selectors
@@ -196,8 +202,9 @@ class DemoMEV extends Component {
 
         <Row>
           <Col lg={12} md={12} sm={12}>
+            <h1>Dataset selector</h1>
             <p>{`
-              The Dataspec selector shows only options that are valid (i.e.,
+              The Dataset selector shows only options that are valid (i.e.,
               actually select something) in combination with the Model,
               Emissions, and Variable selections above.
             `}</p>
@@ -206,19 +213,21 @@ class DemoMEV extends Component {
 
         <Row>
           <Col {...DemoMEV.colProps}>
-            mevConstraint:
-            <div style={{height: '10em'}}>
+            <h2>mevConstraint</h2>
+            <div>
               {stringify(mevConstraint)}
             </div>
-            mevFilteredMetadata:
+            {/*mevFilteredMetadata:*/}
             {/*<div style={{height: '10em'}}>*/}
               {/*{stringify(mevFilteredMetadata)}*/}
             {/*</div>*/}
+            <h2>Dataset selector</h2>
             <DatasetSelector
               bases={mevFilteredMetadata}
               value={this.state.dataset}
               onChange={this.handleChangeDataset}
             />
+            <h2>Value</h2>
             {stringify(this.state.dataset && this.state.dataset.value.representative)}
           </Col>
           <Col {...DemoMEV.colProps} lgOffset={6} mdOffset={6} smOffset={6}>

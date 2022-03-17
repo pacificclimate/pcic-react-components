@@ -1,0 +1,27 @@
+# This docker-compose uses the following shell environment variables:
+#
+# `SDP_PORT`: External port to map to
+# `SDP_PUBLIC_URL`: Public URL of app
+#
+# Their values are set appropriately in the Makefile for use on a workstation.
+# For use in a production setting, either set the shell
+# variables appropriately when invoking docker-compose, or modify (a copy of)
+# this file with the desired values.
+
+version: '3.2'
+services:
+  pcic-react-components-demo:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        - PUBLIC_URL=${PRC_PUBLIC_URL}
+    image: pcic/pcic-react-components-demo
+    container_name: pcic-react-components-demo
+    ports:
+      - "${PRC_PORT}:3000"
+    # Optional: Uncomment to override the default entrypoint
+#    volumes:
+#      - type: bind
+#        source: ./entrypoint.sh
+#        target: /app/docker/entrypoint.sh

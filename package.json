@@ -12,7 +12,8 @@
     "build-examples": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "build": "rimraf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
+    "build:app": "react-scripts build",
+    "build:library": "rimraf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
   },
   "dependencies": {
     "lodash": "^4.17.11",
