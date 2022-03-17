@@ -18,11 +18,8 @@ export function pathJoin(parts, sep = "/") {
 
 export function basename(publicUrl) {
   try {
-    const r = `/${pathJoin([new URL(publicUrl).pathname || "", "#"])}`;
-    console.log("### basename", r)
-    return r;
+    return `/${pathJoin([new URL(publicUrl).pathname || "", "#"])}`;
   } catch (e) {
-    console.log("### basename", "/#")
     return "/#";
   }
 }
