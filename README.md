@@ -296,7 +296,7 @@ With a small amount of tweaking, this worked out.
 ## Dockerized demo
 
 We need demonstrate this package to non-PCIC people.
-To do so, we created Docker infrastructure for running it.
+We therefore created Docker infrastructure for running it (see `docker/`).
 The Docker image is built manually on whatever server will host the demo.
 The commands for building and running the image are wrapped up in a Makefile;
 the Makefile uses `docker-compose` to handle Docker operations.
@@ -310,18 +310,30 @@ These two variables are given default values; update them in the Makefile
 according to the deployment you wish to make. No need to commit these
 changes to the repo.
 
-### To build the image: 
+### Setup
 
-1. Clone this repo.
-2. Run `make image`.
-3. An image named `pcic/pcic-react-components-demo` (with no further tagging)
+1. Pick a server (e.g., docker-devNN) and port on the server to run the demo 
+   on.
+2. Pick an appropriate public URL
+   (e.g., `https://services.pacificclimate.org/dev/pcic-react-components/`) 
+   for the demo.
+3. Modify proxy config to forward a request from public URL to server and port. 
+   Have it strip the base path (e.g., `/dev/pcic-react-components/`) and 
+   forward the remainder of the path to the server. 
+4. Clone this repo into a suitable directory on the server.
+5. Update Makefile variables with chosen port number and public URL.
+
+### To build the image
+
+1. Run `make image`.
+2. An image named `pcic/pcic-react-components-demo` (tagged `:latest`)
    is created.
 
-### To run the demo:
+### To run the demo
 
 1. Update the Makefile configuration variables.
 2. Run `make up`.
 
-### To stop the demo:
+### To stop the demo
 
 Run `make down`.
