@@ -3,6 +3,12 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
+import flow from 'lodash/fp/flow';
+import split from 'lodash/fp/split';
+import flatten from 'lodash/fp/flatten';
+import compact from 'lodash/fp/compact';
+import join from 'lodash/fp/join';
+import map from 'lodash/fp/map';
 
 import DemoGroupingSelector from '../select/DemoGroupingSelector';
 import DemoSimpleConstraintGroupingSelector from '../select/DemoSimpleConstraintGroupingSelector';
@@ -21,18 +27,29 @@ const navSpec = [
 ];
 
 
+function pathJoin(...parts) {
+  const sep = "/";
+  return flow(
+    map(split(sep)),
+    flatten,
+    compact,
+    join(sep),
+  )(parts);
+}
+
+
 export default class Template extends React.Component {
   render() {
     let publicUrl = process.env.PUBLIC_URL || process.env.REACT_APP_PUBLIC_URL;
     console.log("### publicUrl", publicUrl)
     let pathname;
     try {
-      pathname = new URL(publicUrl).pathname || "/";
+      pathname = new URL(publicUrl).pathname || "";
     } catch (e) {
       console.log("### URL parse error", e)
-      pathname = "/";
+      pathname = "";
     }
-    let basename = `${pathname}#`;
+    let basename = `/${pathJoin(pathname, "#")}`;
     console.log("### basename", basename)
     return (
       <Router basename={basename}>
