@@ -75,7 +75,7 @@ export default class Template extends React.Component {
                 <Route path={`/${path}`} component={component}/>
               ))
             }
-            <Redirect to={'/SimpleConstraintGroupingSelector'}/>
+            <Redirect to={'/Simple'}/>
           </Switch>
         </div>
       </Router>
