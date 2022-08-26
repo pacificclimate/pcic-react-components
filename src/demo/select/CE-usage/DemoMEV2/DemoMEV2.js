@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
+import { Button, Col, Glyphicon, Grid, Row } from 'react-bootstrap';
 import { useImmer } from 'use-immer';
-import {
-  flow, takeWhile, slice, map, reduce, filter, tap,
-  sortBy,
-} from 'lodash/fp';
+import { filter, flow, map, slice, sortBy, takeWhile, } from 'lodash/fp';
 import { objUnion } from '../../../../../src/lib/utils/fp';
 import _ from 'lodash';
-import DatasetSelector from '../../../../lib/components/select/DataspecSelector';
+import DatasetSelector
+  from '../../../../lib/components/select/DataspecSelector';
 import ModelSelector from '../../../../lib/components/select2/ModelSelector';
 import EmissionsScenarioSelector
   from '../../../../lib/components/select2/EmissionsScenarioSelector';
@@ -48,11 +46,11 @@ const Selectors = {
   'variable': VariableSelector,
 };
 
-function SelectorColumn({ sel, selectorOrder, mev, onChange, onNoChange }) {
-  console.group(`SelectorColumn (${sel})`)
-  const Selector = Selectors[sel];
-  const constraint = selectorConstraint(sel, selectorOrder, mev);
-  const canReplace = selectorCanReplace(sel, selectorOrder, mev);
+
+function SelectorColumn({
+  Selector, constraint, value, onChange, onNoChange, canReplace, name,
+}) {
+  console.group(`SelectorColumn (${name})`)
   console.log("constraint", constraint)
   console.log("canReplace", canReplace)
   console.groupEnd()
@@ -67,14 +65,14 @@ function SelectorColumn({ sel, selectorOrder, mev, onChange, onNoChange }) {
       <Selector
         bases={meta}
         constraint={constraint}
-        value={mev[sel].option}
-        onChange={onChange[sel]}
+        value={value}
+        onChange={onChange}
+        onNoChange={onNoChange}
         canReplace={canReplace}
-        onNoChange={onNoChange[sel]}
       />
       <h2>Value</h2>
       <p>
-        {stringify(mev[sel] && mev[sel].option && mev[sel].option.value.representative)}
+        {stringify(value && value.value && value.value.representative)}
       </p>
     </Col>
   );
@@ -202,15 +200,21 @@ function DemoMEV2() {
       </Row>
 
       <Row>
-        {map(sel => (
-          <SelectorColumn
-            sel={sel}
-            selectorOrder={selectorOrder}
-            mev={mev}
-            onChange={onChangeMev}
-            onNoChange={onNoChangeMev}
-          />
-        ), selectorOrder)}
+        {map(sel => {
+          const constraint = selectorConstraint(sel, selectorOrder, mev);
+          const canReplace = selectorCanReplace(sel, selectorOrder, mev);
+          return(
+            <SelectorColumn
+              Selector={Selectors[sel]}
+              constraint={constraint}
+              value={mev[sel].option}
+              onChange={onChangeMev[sel]}
+              onNoChange={onNoChangeMev[sel]}
+              canReplace={canReplace}
+              name={sel}
+            />
+          )
+        }, selectorOrder)}
         <Col {...colProps}>
           <ul>
             {
