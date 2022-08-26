@@ -66,7 +66,7 @@ const Selectors = {
   'variable': VariableSelector,
 };
 
-function SelectorColumn({ sel, selectorOrder, mev, onChange }) {
+function SelectorColumn({ sel, selectorOrder, mev, onChange, setSettled }) {
   console.group(`SelectorColumn (${sel})`)
   const Selector = Selectors[sel];
   const constraint = selectorConstraint(sel, selectorOrder, mev);
@@ -88,6 +88,7 @@ function SelectorColumn({ sel, selectorOrder, mev, onChange }) {
         value={mev[sel].option}
         onChange={onChange[sel]}
         canReplace={canReplace}
+        setSettled={setSettled[sel]}
       />
       <h2>Value</h2>
       <p>
@@ -121,6 +122,17 @@ function DemoMEV2() {
       draft.variable.isSettled = true;
     }),
   };
+  const setSettledMev = {
+    model: () => setMev(draft => {
+      draft.model.isSettled = true;
+    }),
+    emissions: () => setMev(draft => {
+      draft.emissions.isSettled = true;
+    }),
+    variable: () => setMev(draft => {
+      draft.variable.isSettled = true;
+    }),
+  }
 
   const [selectorOrder, setSelectorOrder] = useState(
     'model emissions variable'.split(' ')
@@ -214,6 +226,7 @@ function DemoMEV2() {
             selectorOrder={selectorOrder}
             mev={mev}
             onChange={onChangeMev}
+            setSettled={setSettledMev}
           />
         ), selectorOrder)}
         <Col {...colProps}>

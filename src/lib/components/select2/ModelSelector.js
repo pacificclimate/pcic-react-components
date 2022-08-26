@@ -4,7 +4,7 @@ import ReplaceValueOrRender from './ReplaceValueOrRender';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 export default function ModelSelector({
-  bases, constraint, value, onChange, canReplace, ...rest
+  bases, constraint, value, onChange, canReplace, setSettled, ...rest
 }) {
   const options = useMemo(() => makeOptionsFromItems(
     {
@@ -23,6 +23,7 @@ export default function ModelSelector({
       value={value}
       onChange={onChange}
       canReplace={canReplace}
+      setSettled={setSettled}
     >
       <Select
         options={options}

@@ -4,7 +4,7 @@ import ReplaceValueOrRender from './ReplaceValueOrRender';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 export default function VariableSelector({
-  bases, constraint, value, onChange, canReplace, ...rest
+  bases, constraint, value, onChange, canReplace, setSettled, ...rest
 }) {
   console.group("VariableSelector")
   console.log("constraint", constraint)
@@ -24,8 +24,11 @@ export default function VariableSelector({
   return (
     <ReplaceValueOrRender
       name={"VariableSelector"}
-      options={options} value={value} onChange={onChange}
+      options={options}
+      value={value}
+      onChange={onChange}
       canReplace={canReplace}
+      setSettled={setSettled}
     >
       <Select
         options={options}
