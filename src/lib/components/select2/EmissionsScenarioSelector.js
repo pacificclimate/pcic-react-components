@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { flow, join, map, split } from 'lodash/fp';
 import Select from 'react-select';
-import ReplaceValueOrRender from './ReplaceValueOrRender';
+import ReplaceValue from './ReplaceValue';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 const formattedPart = {
@@ -45,7 +45,7 @@ export default function EmissionsScenarioSelector({
 
   console.groupEnd()
   return (
-    <ReplaceValueOrRender
+    <ReplaceValue
       name={"EmissionsScenarioSelector"}
       options={options}
       value={value}
@@ -59,6 +59,6 @@ export default function EmissionsScenarioSelector({
         onChange={onChange}
         {...rest}
       />
-    </ReplaceValueOrRender>
+    </ReplaceValue>
   );
 }

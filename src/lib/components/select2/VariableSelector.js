@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import Select from 'react-select';
-import ReplaceValueOrRender from './ReplaceValueOrRender';
+import ReplaceValue from './ReplaceValue';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 export default function VariableSelector({
@@ -22,7 +22,7 @@ export default function VariableSelector({
   console.log("options", options)
 
   return (
-    <ReplaceValueOrRender
+    <ReplaceValue
       name={"VariableSelector"}
       options={options}
       value={value}
@@ -36,6 +36,6 @@ export default function VariableSelector({
         onChange={onChange}
         {...rest}
       />
-    </ReplaceValueOrRender>
+    </ReplaceValue>
   );
 }

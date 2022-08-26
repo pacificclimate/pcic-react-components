@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import Select from 'react-select';
-import ReplaceValueOrRender from './ReplaceValueOrRender';
+import ReplaceValue from './ReplaceValue';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 export default function ModelSelector({
@@ -17,7 +17,7 @@ export default function ModelSelector({
   // console.log("### ModelSelector options", options)
 
   return (
-    <ReplaceValueOrRender
+    <ReplaceValue
       name={"ModelSelector"}
       options={options}
       value={value}
@@ -31,6 +31,6 @@ export default function ModelSelector({
         onChange={onChange}
         {...rest}
       />
-    </ReplaceValueOrRender>
+    </ReplaceValue>
   );
 }
