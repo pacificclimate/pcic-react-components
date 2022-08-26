@@ -1,24 +1,21 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { Grid, Row, Col, Button, Glyphicon } from 'react-bootstrap';
 import { useImmer } from 'use-immer';
-import memoize from 'memoize-one';
 import {
   flow, takeWhile, slice, map, reduce, filter, tap,
-  sortBy, get,
+  sortBy,
 } from 'lodash/fp';
 import { objUnion } from '../../../../../src/lib/utils/fp';
 import _ from 'lodash';
-
-import meta from '../../assets/meta'
-import './DemoMEV2.css';
-// import { ModelSelector, EmissionsScenarioSelector, VariableSelector }
-//   from '../../../../lib/components/select2/cascading-logic';
 import DatasetSelector from '../../../../lib/components/select/DataspecSelector';
 import ModelSelector from '../../../../lib/components/select2/ModelSelector';
 import EmissionsScenarioSelector
   from '../../../../lib/components/select2/EmissionsScenarioSelector';
 import VariableSelector
   from '../../../../lib/components/select2/VariableSelector';
+
+import meta from '../../assets/meta'
+import './DemoMEV2.css';
 
 
 function stringify(obj) {
@@ -31,13 +28,10 @@ const colProps = {
 
 const selectorConstraint =
   (thisSelector, selectorOrder, state) => flow(
-    tap(() => console.log(`anySelectorConstraint: thisSelector`, thisSelector, `selectorOrder`, selectorOrder, 'state', state)),
     takeWhile(selector => selector !== thisSelector),
     map(selector => state[selector] && state[selector].option && state[selector].option.value.representative),
     objUnion,
-    tap(result => console.log(`anySelectorConstraint: result`, result))
-  )(selectorOrder)
-;
+  )(selectorOrder);
 
 const selectorCanReplace = (sel, selectorOrder, mev) => {
   // TODO: Generalize
@@ -48,25 +42,13 @@ const selectorCanReplace = (sel, selectorOrder, mev) => {
   }
 }
 
-// const Selectors = {
-//   model: (props) => (
-//     <ModelSelector value={mev.model} onChange={setModel} {...props}/>
-//   ),
-//   emissions: (props) => (
-//     <EmissionsScenarioSelector value={mev.emissions} onChange={setEmissions} {...props}/>
-//   ),
-//   variable: (props) => (
-//     <VariableSelector value={mev.variable} onChange={setVariable} {...props}/>
-//   ),
-// };
-
 const Selectors = {
   'model': ModelSelector,
   'emissions': EmissionsScenarioSelector,
   'variable': VariableSelector,
 };
 
-function SelectorColumn({ sel, selectorOrder, mev, onChange, setSettled }) {
+function SelectorColumn({ sel, selectorOrder, mev, onChange, onNoChange }) {
   console.group(`SelectorColumn (${sel})`)
   const Selector = Selectors[sel];
   const constraint = selectorConstraint(sel, selectorOrder, mev);
@@ -88,7 +70,7 @@ function SelectorColumn({ sel, selectorOrder, mev, onChange, setSettled }) {
         value={mev[sel].option}
         onChange={onChange[sel]}
         canReplace={canReplace}
-        setSettled={setSettled[sel]}
+        onNoChange={onNoChange[sel]}
       />
       <h2>Value</h2>
       <p>
@@ -122,7 +104,7 @@ function DemoMEV2() {
       draft.variable.isSettled = true;
     }),
   };
-  const setSettledMev = {
+  const onNoChangeMev = {
     model: () => setMev(draft => {
       draft.model.isSettled = true;
     }),
@@ -226,7 +208,7 @@ function DemoMEV2() {
             selectorOrder={selectorOrder}
             mev={mev}
             onChange={onChangeMev}
-            setSettled={setSettledMev}
+            onNoChange={onNoChangeMev}
           />
         ), selectorOrder)}
         <Col {...colProps}>

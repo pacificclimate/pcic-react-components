@@ -7,7 +7,7 @@ export default function ReplaceValueOrRender({
   value,
   onChange,
   canReplace = true,
-  setSettled,
+  onNoChange,
   children
 }) {
   console.group(`ReplaceValueOrRender (${name})`)
@@ -21,6 +21,7 @@ export default function ReplaceValueOrRender({
   }
 
   if (isNull(value)) {
+    onNoChange()
     console.groupEnd();
     return children;
   }
@@ -34,7 +35,7 @@ export default function ReplaceValueOrRender({
     console.groupEnd();
     return "replacing";
   } else {
-    setSettled()
+    onNoChange()
   }
 
   console.groupEnd();

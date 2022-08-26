@@ -23,7 +23,7 @@ const formatPart = part => {
 };
 
 export default function EmissionsScenarioSelector({
-  bases, constraint, value, onChange, canReplace, setSettled, ...rest
+  bases, constraint, value, onChange, canReplace, onNoChange, ...rest
 }) {
   console.group("EmissionsScenarioSelector")
   console.log("constraint", constraint)
@@ -51,7 +51,7 @@ export default function EmissionsScenarioSelector({
       value={value}
       onChange={onChange}
       canReplace={canReplace}
-      setSettled={setSettled}
+      onNoChange={onNoChange}
     >
       <Select
         options={options}
@@ -61,12 +61,4 @@ export default function EmissionsScenarioSelector({
       />
     </ReplaceValueOrRender>
   );
-  return (
-    <Select
-      options={options}
-      value={value}
-      onChange={onChange}
-      {...rest}
-    />
-  )
 }
