@@ -21,6 +21,7 @@ export default function VariableSelector({
   ), [bases, constraint]);
   console.log("options", options)
 
+  console.groupEnd()
   return (
     <ReplaceValue
       name={"VariableSelector"}
