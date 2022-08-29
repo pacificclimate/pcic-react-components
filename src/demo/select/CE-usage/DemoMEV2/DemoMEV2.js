@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Button, Col, Glyphicon, Grid, Row } from 'react-bootstrap';
 import { useImmer } from 'use-immer';
 import {
-  filter, flow, map, slice, sortBy, takeWhile, takeRightWhile, every,
-  tap,
+  filter, flow, map, sortBy, takeWhile, takeRightWhile, every,
+  tap, fromPairs,
 } from 'lodash/fp';
 import { objUnion } from '../../../../../src/lib/utils/fp';
-import _ from 'lodash';
 import DatasetSelector
   from '../../../../lib/components/select/DataspecSelector';
 import ModelSelector from '../../../../lib/components/select2/ModelSelector';
@@ -27,24 +26,6 @@ const colProps = {
   lg: 3, md: 3, sm: 3,
 };
 
-const selectorConstraint = (selectorId, selectorOrder, mev) =>
-  flow(
-    takeWhile(selector => selector !== selectorId),
-    map(selector =>
-      mev[selector].option
-      && mev[selector].option.value.representative
-    ),
-    objUnion,
-  )(selectorOrder);
-
-const selectorCanReplace = (selectorId, selectorOrder, mev) => flow(
-    takeWhile(selector => selector !== selectorId),
-    tap(x => console.log("### selectorCanReplace", selectorId, x)),
-    map(selector => mev[selector].isSettled),
-    tap(x => console.log("### selectorCanReplace", selectorId, x)),
-    every(Boolean),
-  tap(x => console.log("### selectorCanReplace", selectorId, x)),
-  )(selectorOrder);
 
 const Selectors = {
   'model': ModelSelector,
@@ -84,53 +65,105 @@ function SelectorColumn({
   );
 }
 
-function DemoMEV2() {
-  const [mev, setMev] = useImmer({
-    model: { option: undefined, isSettled: false },
-    emissions: { option: undefined, isSettled: false },
-    variable: { option: undefined, isSettled: false },
-  });
 
-  const handleChangeMev = (selectorId, selectorOrder) => option => {
-    setMev(draft => {
-      draft[selectorId].option = option;
-      draft[selectorId].isSettled = true;
+const useCascadingSelectorState = (initialOrder, initialState = {}) => {
+  const [option, setOption] = useImmer(
+    flow(
+      map(name => [name, initialState[name]]),
+      fromPairs,
+    )(initialOrder)
+  );
 
+  const [isSettled, setIsSettled] = useImmer(
+    flow(
+      map(name => [name, false]),
+      fromPairs,
+    )(initialOrder)
+  );
+
+  const [order, setOrder] = useImmer(initialOrder);
+
+  const handleChangeValue = selectorId => option => {
+    setOption(draft => {
+      draft[selectorId] = option;
+    });
+
+    setIsSettled(draft => {
+      draft[selectorId] = true;
       // All downstream selectors need updating because constraints
       // from upstream have changed.
       const afterIds = takeRightWhile(
-        id => id !== selectorId, selectorOrder
+        id => id !== selectorId, order
       );
       for (const id of afterIds) {
-        draft[id].isSettled = false;
+        draft[id] = false;
       }
     })
   }
 
-  const handleNoChangeMev = selectorId => () => {
-    setMev(draft => {
-      draft[selectorId].isSettled = true;
+  const handleNoChangeValue = selectorId => () => {
+    setIsSettled(draft => {
+      draft[selectorId] = true;
     });
   }
 
-  const [selectorOrder, setSelectorOrder] = useState(
-    'model emissions variable'.split(' ')
-  );
-  const moveSelectorOrderDown = index => () =>
-    setSelectorOrder(prevOrder => {
-      return _.concat(
-        slice(0, index, prevOrder),
-        prevOrder[index + 1],
-        prevOrder[index],
-        slice(index + 2, undefined, prevOrder),
-      );
+  const moveOrderItemDown = index => () => {
+    setOrder(draft => {
+      // Swap order[index] and order[index+1]
+      draft[index] = order[index + 1];
+      draft[index + 1] = order[index];
     });
+  }
+
+  const selectorConstraint = (selectorId) =>
+    flow(
+      takeWhile(id => id !== selectorId),
+      map(selector =>
+        option[selector]
+        && option[selector].value.representative
+      ),
+      objUnion,
+    )(order);
+
+  const selectorCanReplace = (selectorId) => flow(
+    takeWhile(id => id !== selectorId),
+    tap(x => console.log("### selectorCanReplace", selectorId, x)),
+    map(selector => isSettled[selector]),
+    tap(x => console.log("### selectorCanReplace", selectorId, x)),
+    every(Boolean),
+    tap(x => console.log("### selectorCanReplace", selectorId, x)),
+  )(order);
+
+  return {
+    order,
+    moveOrderItemDown,
+    option,
+    isSettled,
+    handleChangeValue,
+    handleNoChangeValue,
+    selectorConstraint,
+    selectorCanReplace,
+  };
+
+}
+
+function DemoMEV2() {
+  const {
+    order: selectorOrder,
+    moveOrderItemDown: moveSelectorOrderDown,
+    option,
+    isSettled,
+    handleChangeValue,
+    handleNoChangeValue,
+    selectorConstraint,
+    selectorCanReplace,
+  } = useCascadingSelectorState('model emissions variable'.split(' '));
 
   const [dataset, setDataset] = useState({ value: {} });
 
-  console.log('DemoMEV.render')
+  console.log('DemoMEV2')
   const mevConstraint = objUnion(
-    map(mev => mev && mev.option && mev.option.value.representative)(mev)
+    map(opt => opt && opt.value.representative)(option)
   );
   console.log('DemoMEV.render: mevConstraint', mevConstraint)
   const mevFilteredMetadata = filter(mevConstraint)(meta);
@@ -160,11 +193,7 @@ function DemoMEV2() {
       </Row>
       <Row>
         <Col>
-          {stringify({
-            model: mev.model.isSettled,
-            emissions: mev.emissions.isSettled,
-            variable: mev.variable.isSettled,
-          })}
+          {stringify(isSettled)}
         </Col>
       </Row>
       <Row>
@@ -200,15 +229,15 @@ function DemoMEV2() {
 
       <Row>
         {map(sel => {
-          const constraint = selectorConstraint(sel, selectorOrder, mev);
-          const canReplace = selectorCanReplace(sel, selectorOrder, mev);
+          const constraint = selectorConstraint(sel);
+          const canReplace = selectorCanReplace(sel);
           return(
             <SelectorColumn
               Selector={Selectors[sel]}
               constraint={constraint}
-              value={mev[sel].option}
-              onChange={handleChangeMev(sel, selectorOrder)}
-              onNoChange={handleNoChangeMev(sel, selectorOrder)}
+              value={option[sel]}
+              onChange={handleChangeValue(sel)}
+              onNoChange={handleNoChangeValue(sel)}
               canReplace={canReplace}
               name={sel}
             />
