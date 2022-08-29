@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Col, Glyphicon, Grid, Row } from 'react-bootstrap';
 import { useImmer } from 'use-immer';
 import {
-  filter, flow, map, slice, sortBy, takeWhile, every,
+  filter, flow, map, slice, sortBy, takeWhile, takeRightWhile, every,
   tap,
 } from 'lodash/fp';
 import { objUnion } from '../../../../../src/lib/utils/fp';
@@ -96,10 +96,13 @@ function DemoMEV2() {
       draft[selectorId].option = option;
       draft[selectorId].isSettled = true;
 
-      for (const id of selectorOrder) {
-        if (id !== selectorId) {
-          draft[id].isSettled = false;
-        }
+      // All downstream selectors need updating because constraints
+      // from upstream have changed.
+      const afterIds = takeRightWhile(
+        id => id !== selectorId, selectorOrder
+      );
+      for (const id of afterIds) {
+        draft[id].isSettled = false;
       }
     })
   }
