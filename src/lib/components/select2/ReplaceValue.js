@@ -46,7 +46,7 @@ export default function ReplaceValue({
     );
 
   if (needsReplacing) {
-    // Replace with first enabled value. If none, replace with null.
+    // Replace with first enabled value. If none enabled, replace with null.
     const replacementValue = find({ isDisabled: false }, options) || null;
     onChange(replacementValue);
     return children;

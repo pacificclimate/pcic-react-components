@@ -7,11 +7,12 @@
 //
 // CE metadata comes in a form that is slightly more compact to transfer but
 // harder to process for purposes such as the selectors. In the CE frontend,
-// a function transforms the compact representation of metadata into a form
-// in which there is exactly one metadata item per unique_id/file. The result
-// is an array of objects of the form below. Effectively, each unique_id/file
-// is tagged with all relevant properties that characterize it. This makes
-// filtering and otherwise processing them much simpler.
+// a function (see https://github.com/pacificclimate/climate-explorer-frontend/blob/master/src/data-services/ce-backend.js#L12-L40)
+// transforms the compact representation of metadata into a form in which there
+// is exactly one metadata item per unique_id/file. The result is an array of
+// objects of the form below. Effectively, each unique_id/file is tagged with
+// all relevant properties that characterize it. This makes filtering and
+// otherwise processing them much simpler.
 //
 //    {
 //      unique_id,
@@ -67,15 +68,38 @@
 // This is what I meant by RS dealing only in options. Its basic interactions
 // as a controlled component only refer to options.
 //
-// RS <Select> also accepts an enormous number of other props that allow you
+// RS `<Select>` also accepts an enormous number of other props that allow you
 // to control its appearance and behaviour, and to override its default
 // configuration. I've used very few of these here.
+//
+//
+// Notes regarding constraints:
+//
+// Each of the selectors (defined elsewhere using these functions) accepts a
+// `constraint` prop which determines which of its options are enabled.
+// A `constraint` prop is an object containing a subset of metadata item props.
+// If any metadata item associated with an option (`option.value.contexts`)
+// matches all the values in the constraint object, then the option is enabled
+// -- there is at least one file associated with that option that can match
+// the constraint, so it is legitimate to choose this option. Otherwise (no
+// matching associated metadata item -- no matching files), the option is
+// disabled. A typical constraint object looks like the following examples:
+//
+//    {
+//      model_id: "CanESM",
+//    }
+//
+//    {
+//      model_id: "CanESM",
+//      experiment: "historical, rcp8.5",
+//    }
+
 
 
 import { flow, isMatch, map, some } from 'lodash/fp';
 import { groupByGeneral } from '../../utils/fp';
 
-// This function transforms an array of (normalized metadata, see above) items
+// This function transforms an array of (normalized; see above) metadata items
 // into options acceptable to RS (see above). Its basic operation is:
 //
 //    - Extract a subset of props from the metadata item that is relevant to
@@ -102,11 +126,12 @@ export const makeOptionsFromItems = (
     getOptionRepresentative,
     // Function mapping a metadata item to its representative.
 
-    getOptionLabel = option => option.value.representative.toString(),
+    getOptionLabel,
     // Function mapping an option to the value to be used for its label.
 
     getOptionIsDisabled = () => false,
     // Function mapping an option to the `isDisabled` value.
+    // Generally speaking, the default function is too simple for real use.
   },
   items
 ) => {
@@ -143,18 +168,6 @@ export const makeOptionsFromItems = (
     })),
   )(items);
 }
-
-// Notes regarding constraints:
-//
-// Each of the selectors (defined elsewhere using these functions) accepts a
-// `constraint` prop which determines which of its options are enabled.
-// A `constraint` prop is an object containing a subset of metadata item props.
-// If any metadata item associated with an option (`option.value.contexts`)
-// matches all the values in the constraint object, then the option is enabled
-// -- there is at least one file associated with that option that can match
-// the constraint, so it is legitimate to choose this option. Otherwise (no
-// matching associated metadata item -- no matching files), the option is
-// disabled.
 
 // This function receives a constraint object and returns a function mapping
 // an option to the value for `isDisabled`. The resulting function is passed

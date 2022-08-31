@@ -12,13 +12,16 @@
 // equality. There's no need for complicated expressions that compare deep
 // object properties and that can become incorrect when the object structure
 // changes. Immutable equality checks (reference comparisons) always remain
-// correct.
+// correct. This is also very convenient in React, since checks whether to
+// re-render on a props or state change are checks by reference, by not deep
+// equality. With immer (and any other immutable value system), by reference is
+// identical to by deep equality.
 //
-// (Another nice feature of immer is that only those parts of a complex object
-// that have changed are actually changed; any unaffected parts remain not only
-// the same (deep) value, but the same object and hence the same reference.
-// Therefore, partial comparisons of parts by reference also remain valid and
-// efficient.
+// Another nice feature of immer is that only those parts of a complex object
+// that have been updated are actually changed; any unaffected parts remain
+// not only the same (deep) value, but the same object and hence the same
+// reference. Therefore, partial comparisons of parts by reference also remain
+// valid and efficient.
 //
 // Package `immer` provides a particularly simple and convenient JS interface
 // for creating and updating immutable objects. It was greeted with universal
@@ -48,19 +51,19 @@ import { objUnion } from '../../utils/fp';
 // order can be modified if desired.) As a very typical example that we will use
 // throughout this discussion:
 //
-//   `["model", "emissions", "variable"]`.
+//   ["model", "emissions", "variable"]
 //
 // The hook also takes an optional argument, `initialState` which is an object
 // of initial values for the selector value (current option selection) states.
-// For example:
+// One prop, nominally, for each of the names in `initialOrder`. For example:
 //
 //   { model: null, emissions: null, variable: null }
 //
-// (This would cause RS to select no option in each selector, instead displaying
-// the "Please select ..." message. The same object with `undefined` for each
-// property (equivalently, the empty object `{}`, which is the default) would
-// cause the selectors defined here to self-select the first valid (roughly:
-// enabled) option, in cascade specified by `order`.
+// (The nulls would cause RS to select no option in each selector, instead
+// displaying the "Please select ..." message. The same object with `undefined`
+// for each property (equivalently, the empty object `{}`, which is the default)
+// would cause the selectors defined here to self-select the first valid
+// (roughly: enabled) option, in cascade specified by `order`.
 //
 // From the array of names, the hook constructs three state objects, along
 // with their corresponding setters.
@@ -81,8 +84,7 @@ import { objUnion } from '../../utils/fp';
 // why? Specifically these are:
 //
 // `moveOrderItemDown`: Make a handler to change the selector order by moving
-// the ordering item at `index` downstream one position (i.e., to the next
-// higher index).
+// a specified item downstream one position (i.e., to the next higher index).
 //
 // `selectorCanReplace`: Compute a Boolean indicating whether a selector is
 // permitted to replace its own value. The condition is that all upstream
@@ -127,7 +129,7 @@ export const useCascadingSelectorState = (initialOrder, initialState = {}) => {
   // Make a handler to change the selector order by moving the ordering item
   // at `index` downstream one position (i.e., to the next higher index).
   const moveOrderItemDown = index => () => {
-    if (index < 0 || index > order.length - 1) {
+    if (index < 0 || index >= order.length - 1) {
       return;
     }
     setOrder(draft => {
