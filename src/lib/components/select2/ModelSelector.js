@@ -4,16 +4,40 @@ import ReplaceValue from './ReplaceValue';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 export default function ModelSelector({
-  bases, constraint, value, onChange, canReplace, onNoChange, ...rest
+  metadata,
+  // Metadata from which to form the options.
+
+  constraint,
+  // Constraint determining which options are enabled/disabled.
+  // See Notes regarding constraints in utils.js
+
+  value,
+  // Current selection (option).
+
+  canReplace,
+  // Is this selector permitted to self-replace?
+
+  onChange,
+  // Change handler.
+
+  onNoChange,
+  // No-changed handler. Needed by self-replace logic.
+
+  ...rest
+  // Passed through to React Select.
 }) {
   const options = useMemo(() => makeOptionsFromItems(
     {
       getOptionRepresentative: ({ model_id }) => ({ model_id }),
+      // This is the model selector: group metadata items by model_id.
+
       getOptionLabel: option => option.value.representative.model_id,
+      // Label with model_id
+
       getOptionIsDisabled: makeGetOptionIsDisabled(constraint),
     },
-    bases
-  ), [bases, constraint]);
+    metadata
+  ), [metadata, constraint]);
   // console.log("### ModelSelector options", options)
 
   return (

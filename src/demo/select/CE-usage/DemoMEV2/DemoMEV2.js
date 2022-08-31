@@ -35,7 +35,16 @@ const Selectors = {
 // Component that renders a React Bootstrap column containing a single
 // selector plus associated labels and supplementary info.
 function SelectorColumn({
-  Selector, constraint, value, onChange, onNoChange, canReplace, name,
+  Selector,
+  // Specific selector to be rendered in column
+
+  name,
+  // For debugging, optional.
+
+  constraint,
+  value,
+  ...rest
+  // Props to be passed through to rendered selector.
 }) {
   return (
     <Col {...colProps}>
@@ -45,12 +54,10 @@ function SelectorColumn({
       </div>
       <h2>Selector</h2>
       <Selector
-        bases={meta}
+        metadata={meta}
         constraint={constraint}
         value={value}
-        onChange={onChange}
-        onNoChange={onNoChange}
-        canReplace={canReplace}
+        {...rest}
       />
       <h2>Value</h2>
       <p>

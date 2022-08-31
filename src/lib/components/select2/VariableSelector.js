@@ -4,7 +4,8 @@ import ReplaceValue from './ReplaceValue';
 import { makeOptionsFromItems, makeGetOptionIsDisabled } from './utils';
 
 export default function VariableSelector({
-  bases, constraint, value, onChange, canReplace, onNoChange, ...rest
+  metadata,
+  constraint, value, onChange, canReplace, onNoChange, ...rest
 }) {
   console.group("VariableSelector")
   console.log("constraint", constraint)
@@ -13,12 +14,17 @@ export default function VariableSelector({
       getOptionRepresentative:
         ({ variable_id, variable_name, multi_year_mean }) =>
           ({ variable_id, variable_name, multi_year_mean }),
+      // This is the variable selector. A unique variable is characterized by
+      // the combination of these three metadata props.
+
       getOptionLabel: ({ value: { representative: { variable_id, variable_name }}}) =>
         `${variable_id} - ${variable_name}`,
+      // Label
+
       getOptionIsDisabled: makeGetOptionIsDisabled(constraint),
     },
-    bases
-  ), [bases, constraint]);
+    metadata
+  ), [metadata, constraint]);
   console.log("options", options)
 
   console.groupEnd()

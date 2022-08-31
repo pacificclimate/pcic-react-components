@@ -23,13 +23,35 @@ const formatPart = part => {
 };
 
 export default function EmissionsScenarioSelector({
-  bases, constraint, value, onChange, canReplace, onNoChange, ...rest
+  metadata,
+  // Metadata from which to form the options.
+
+  constraint,
+  // Constraint determining which options are enabled/disabled.
+  // See Notes regarding constraints in utils.js
+
+  value,
+  // Current selection (option).
+
+  canReplace,
+  // Is this selector permitted to self-replace?
+
+  onChange,
+  // Change handler.
+
+  onNoChange,
+  // No-changed handler. Needed by self-replace logic.
+
+  ...rest
+  // Passed through to React Select.
 }) {
   console.group("EmissionsScenarioSelector")
   console.log("constraint", constraint)
   const options = useMemo(() => makeOptionsFromItems(
     {
       getOptionRepresentative: ({ experiment }) => ({ experiment }),
+      // This is the emissions selector: group metadata items by experiment.
+
       getOptionLabel: option => (
         flow(
           split(/\s*,\s*/),
@@ -37,10 +59,12 @@ export default function EmissionsScenarioSelector({
           join(', then '),
         )(option.value.representative.experiment)
       ),
+      // Label has a human-friendly form, computed from raw form in `experiment`.
+
       getOptionIsDisabled: makeGetOptionIsDisabled(constraint),
     },
-    bases
-  ), [bases, constraint]);
+    metadata
+  ), [metadata, constraint]);
   console.log("options", options)
 
   console.groupEnd()
