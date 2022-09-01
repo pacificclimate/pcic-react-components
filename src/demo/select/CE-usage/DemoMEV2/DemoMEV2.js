@@ -68,17 +68,21 @@ function SelectorColumn({
 }
 
 
+// Component that demonstrates usage of all select2 selectors and associated
+// utility functions and hooks.
 function DemoMEV2() {
+  // Construct states and handlers for model, emissions and controller
+  // selectors. Let the awesomeness begin.
   const {
     order: selectorOrder,
     moveOrderItemDown: moveSelectorOrderDown,
     value,
-    isSettled,
+    // isSettled,
     handleChangeValue,
     handleNoChangeValue,
     selectorConstraint,
     selectorCanReplace,
-  } = useCascadingSelectorState('model emissions variable'.split(' '));
+  } = useCascadingSelectorState(["model", "emissions", "variable"]);
 
   const [dataset, setDataset] = useState({ value: {} });
 
@@ -114,11 +118,13 @@ function DemoMEV2() {
             `}</p>
         </Col>
       </Row>
-      <Row>
-        <Col>
-          {stringify(isSettled)}
-        </Col>
-      </Row>
+      {/*<Row>*/}
+      {/*  <Col>*/}
+      {/*    {stringify(isSettled)}*/}
+      {/*  </Col>*/}
+      {/*</Row>*/}
+
+      {/* Row of labels and buttons for changing cascade order */}
       <Row>
         {
           selectorOrder.map((sel, index) => (
@@ -147,9 +153,12 @@ function DemoMEV2() {
             </Col>
           ))
         }
-        <Col {...colProps}><h2>Filtered metadata</h2></Col>
+        {/* Plus an extra column for the metadata filtered by the resulting
+        selections */}
+        <Col {...colProps}><h2>Metadata filtered by selections</h2></Col>
       </Row>
 
+      {/* Row of selectors (in cascade order), with associated labels etc. */}
       <Row>
         {map(sel => {
           const constraint = selectorConstraint(sel);
@@ -166,6 +175,8 @@ function DemoMEV2() {
             />
           )
         }, selectorOrder)}
+        {/* Plus an extra column for the metadata filtered by the resulting
+         selections */}
         <Col {...colProps}>
           <ul>
             {
@@ -182,6 +193,7 @@ function DemoMEV2() {
         </Col>
       </Row>
 
+      {/* Dataset selector. It has not yet been rebuilt with the new utils. */}
       <Row>
         <Col lg={12} md={12} sm={12}>
           <h1>Dataset selector</h1>

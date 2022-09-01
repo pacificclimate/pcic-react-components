@@ -5,32 +5,37 @@
 //
 // In this hook we use the package `use-immer` (which depends on package
 // `immer`) for managing state values. Package `immer` efficiently implements
-// immutable objects with a remarkably developer-friendly interface. The value
-// of immutable objects to developers is that they greatly simplify equality
-// checking on non-atomic values such as hash objects and arrays: Immutable
-// objects can be checked for value equality by checking only reference
-// equality. There's no need for complicated expressions that compare deep
-// object properties and that can become incorrect when the object structure
-// changes. Immutable equality checks (reference comparisons) always remain
-// correct. This is also very convenient in React, since checks whether to
-// re-render on a props or state change are checks by reference, by not deep
-// equality. With immer (and any other immutable value system), by reference is
-// identical to by deep equality.
+// immutable objects with a remarkably developer-friendly interface.
+//
+// The main value of immutable objects to React programmers is that React
+// checks whether to re-render a component on a props or state change *by
+// reference equality*, not by deep equality. With immutable values, checks by
+// reference are isomorphic to checks by deep equality. This spares the
+// programmer from elaborate coding to construct new objects when a deep value
+// changes, and which may cause unnecessary updates when the "new" value is
+// actually the same as the old.
 //
 // Another nice feature of immer is that only those parts of a complex object
 // that have been updated are actually changed; any unaffected parts remain
 // not only the same (deep) value, but the same object and hence the same
 // reference. Therefore, partial comparisons of parts by reference also remain
-// valid and efficient.
+// valid and efficient. Immer never replaces anything unnecessarily, which makes
+// it more efficient in terms of both time and storage than the usual
+// object-reconstruction code given in React (and other) examples. Testing has
+// shown that in some fairly common cases it significantly improves performance.
 //
-// Package `immer` provides a particularly simple and convenient JS interface
-// for creating and updating immutable objects. It was greeted with universal
-// acclaim and a couple of awards upon its release and is in wide use in the
-// React community. See https://immerjs.github.io/immer/ for more information.
+// Package also `immer` provides a particularly simple and convenient JS
+// interface for creating and updating immutable objects. It was greeted with
+// universal acclaim and a couple of awards upon its release and is in wide use
+// in the React community. See https://immerjs.github.io/immer/ for more
+// information.
 //
-// `use-immer` wraps `immer` in a React hook, and is what we use here.
+// Package `use-immer` wraps `immer` in a React hook, and is what we use here.
 // See https://immerjs.github.io/immer/example-setstate and
 // https://www.npmjs.com/package/use-immer for more information.
+//
+// Yes, this is an advertisement for immutable values in general and immer in
+// particular.
 
 import { useImmer } from 'use-immer';
 import {
@@ -51,13 +56,13 @@ import { objUnion } from '../../utils/fp';
 // order can be modified if desired.) As a very typical example that we will use
 // throughout this discussion:
 //
-//   ["model", "emissions", "variable"]
+//    ["model", "emissions", "variable"]
 //
 // The hook also takes an optional argument, `initialState` which is an object
 // of initial values for the selector value (current option selection) states.
 // One prop, nominally, for each of the names in `initialOrder`. For example:
 //
-//   { model: null, emissions: null, variable: null }
+//    { model: null, emissions: null, variable: null }
 //
 // (The nulls would cause RS to select no option in each selector, instead
 // displaying the "Please select ..." message. The same object with `undefined`
@@ -69,13 +74,28 @@ import { objUnion } from '../../utils/fp';
 // with their corresponding setters.
 //
 //  `order`, `setOrder`: An immer (see above) state object with initial value
-//  given by `initialOrder`.
+//  given by `initialOrder`. Continuing the example above:
+//
+//    ["model", "emissions", "variable"]
 //
 //  `value`, `setValue`: An immer (see above) state object with one prop per
 //  name in `initialOrder`, with initial values given by `initialState`.
+//  Example:
+//
+//    {
+//      model: <selected model option>,
+//      emissions: <selected emissions option>,
+//      variable: <selected variable option>,
+//    }
 //
 //  `isSettled`, `setIsSettled`: An immer (see above)  state object with one
-//  prop per name in `initialOrder`, with initial values `false`.
+//  prop per name in `initialOrder`, with initial values `false`. Example:
+//
+//    {
+//      model: false,
+//      emissions: false,
+//      variable: false,
+//    }
 //
 // Alone, these state objects and setters would be only moderately useful. This
 // hook also returns several convenient state updaters (e.g., `onChange`
@@ -85,17 +105,22 @@ import { objUnion } from '../../utils/fp';
 //
 // `moveOrderItemDown`: Make a handler to change the selector order by moving
 // a specified item downstream one position (i.e., to the next higher index).
+// For example, `moveOrderItemDown(1)` constructs a handler that adjusts the
+// ordering by moving `order[1]` down to `order[2]`, i.e., swaps them.
 //
 // `selectorCanReplace`: Compute a Boolean indicating whether a selector is
 // permitted to replace its own value. The condition is that all upstream
 // selectors have settled.
 //
 // `handleChangeValue`: Make a handler to change a specified selector value.
-// Update both the selector value and the `isSettled` values accordingly.
+// Update both the selector value and the `isSettled` states accordingly.
+// For example, `handleChangeValue("model")` constructs a handler that updates
+// the "model" value state and downstream `isSettled` states.
 //
 // `handleNoChangeValue`: Make a handler for the case that a selector is
 // permitted to update its value, but did not need to because its current value
-// remains valid.
+// remains valid. For example, `handleNoChangeValue("model")` constructs a
+// handler that updates the "model" `isSettled` state.
 //
 // Finally, the hook returns a utility function for computing the constraint
 // cascaded down from upstream selector value selections.
@@ -122,7 +147,38 @@ import { objUnion } from '../../utils/fp';
 // this (I sincerely hope) clearer one that is also exposed for the user to
 // examine and potentially modify.
 
-export const useCascadingSelectorState = (initialOrder, initialState = {}) => {
+export const useCascadingSelectorState = (
+  initialOrder,
+  // Array of state value names.
+
+  initialState = {}
+  // Initial values for each state. All other keys than those named in
+  // `initialOrder` are ignored.
+  //
+  // With the selectors defined in this package, the only useful initial state
+  // values are `null` and `undefined`. The other possibly useful values
+  // would be actual options for each selector. However, in our case we do not
+  // have access to them; they are constructed inside the selectors. We could,
+  // however, update the selectors to match options against any non-option
+  // object passed as their `value` prop, and select the first matching one.
+  // This would enable initial values such as:
+  //
+  //    {
+  //      model: { label: "CanESM2" },
+  //      experiment { label: "Historical, then RCP 8.5") },
+  //      variable: { label: ... },  // Too complicated to figure out in detail
+  //    }
+  //
+  // or
+  //
+  //    {
+  //      model: { model_id: "CanESM2" },
+  //      experiment { experiment: "historical, rcp8.5") },
+  //      variable: { ... }, // Too complicated to figure out in detail
+  //    }
+  //
+  // An idea for later.
+) => {
   // Selector order state.
   const [order, setOrder] = useImmer(initialOrder);
 

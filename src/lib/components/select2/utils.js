@@ -9,10 +9,10 @@
 // harder to process for purposes such as the selectors. In the CE frontend,
 // a function (see https://github.com/pacificclimate/climate-explorer-frontend/blob/master/src/data-services/ce-backend.js#L12-L40)
 // transforms the compact representation of metadata into a form in which there
-// is exactly one metadata item per unique_id/file. The result is an array of
-// objects of the form below. Effectively, each unique_id/file is tagged with
-// all relevant properties that characterize it. This makes filtering and
-// otherwise processing them much simpler.
+// is exactly one metadata item per unique_id/file. Each unique_id/file is
+// tagged with all relevant properties that characterize it. The result is an
+// array of objects of the form below. This makes filtering and otherwise
+// processing them much simpler.
 //
 //    {
 //      unique_id,
@@ -54,12 +54,12 @@
 //
 // - `options`: Array of option objects that populate the rendered selector.
 //
-// - `value`: The currently selected option (*not* value!). This is an
+// - `value`: The currently selected option (*not* `option.value`!). This is an
 //    unfortunate naming convention. Really it should be called `option` or
 //    `selectedOption`, but the convention in React generally is to use the
 //    name `value` for this purpose, and RS evidently followed it. It does
 //    make for awkward discussions and JS expressions -- by "value", do we mean
-//    the option or the expression `option.value`?
+//    the entire option or the expression `option.value`?
 //
 // - `onChange`: A callback function called when an option is selected by
 //   user interaction. This callback is called with one argument, the *option*
@@ -99,13 +99,18 @@
 import { flow, isMatch, map, some } from 'lodash/fp';
 import { groupByGeneral } from '../../utils/fp';
 
-// This function transforms an array of (normalized; see above) metadata items
-// into options acceptable to RS (see above). Its basic operation is:
+// This function transforms an array of normalized metadata items (see above)
+// into an array of options acceptable to RS (see above). Its basic operation
+// is:
 //
 //    - Extract a subset of props from the metadata item that is relevant to
-//      the selector being built (e.g., for a model selector, `model_id`) into
-//      an object (e.g., `{ model_id: <whatever> }`. This object containing
-//      the subset is called the "representative" of the metadata item.
+//      the selector into a separate object. This subset of props characterizes
+//      each metadata item with respect to the purpose of the selector. The
+//      object containing the subset is called the "representative" of the
+//      metadata item. For example, for a model selector, exactly one option
+//      characterizes the model of each metadata item, `model_id`, and the
+//      representative of each metadata item is thus the object
+//      `{ model_id: <value> }`.
 //
 //    - Group metadata items by representative.
 //
@@ -142,18 +147,20 @@ export const makeOptionsFromItems = (
       representative: getOptionRepresentative(item),
     })),
 
-    // Group these objects by representative.
+    // Group these objects by representative. The output is an array of
+    // group objects. Each group has a `by` prop, which is the object it
+    // was grouped by, and an `items` prop, which is a list of all input objects
+    // sharing the same `by` value. In our case this is the `represenative`
+    // prop.
     groupByGeneral(({ representative }) => representative),
 
-    // Convert groups to partial React Select option objects. Each such object
-    // contains only the required `value` prop, which is converted to a simpler
-    // and more convenient from the group.
+    // Convert groups to partial React Select option objects. Each partial
+    // options object contains only the `value` prop, which is converted to a
+    // simpler and more convenient from the group; it is basically just a
+    // rearrangement of the group data.
     map(group => ({
-      // Each group has a `by` prop, which is the representative it was grouped
-      // by, and an `items` prop, which is a list of all input objects sharing
-      // the same `by` value.
       value: {
-        // `context` is the list of metadata items sharing the same
+        // `contexts` is the list of metadata items sharing the same
         // representative. It needs to be dug out of the grouped items.
         contexts: map(item => item.context)(group.items),
         representative: group.by,
