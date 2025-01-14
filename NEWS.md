@@ -1,5 +1,11 @@
 # News / Release Notes
 
+## 3.2.0
+
+* Update package versions:
+  - react-select to ^5.9.0
+  - react-icons to ^5.4.0
+
 ## 3.1.1
 
 *2022-Feb-22*

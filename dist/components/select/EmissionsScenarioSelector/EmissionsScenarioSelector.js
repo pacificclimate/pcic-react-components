@@ -9,7 +9,6 @@ const formattedPart = {
   ssp245: 'SSP 2-4.5',
   ssp585: 'SSP 5-8.5'
 };
-
 const formatPart = part => {
   try {
     return formattedPart[part];
@@ -17,9 +16,7 @@ const formatPart = part => {
     return part;
   }
 };
-
 const getOptionLabel = option => flow(split(/\s*,\s*/), map(formatPart), join(', then '))(option.value.representative.experiment);
-
 const EmissionsScenarioSelector = makeStandardSelector({
   defaultDebugValue: 'Emissions',
   representativeProps: ['experiment'],

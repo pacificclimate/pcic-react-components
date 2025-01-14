@@ -1,5 +1,4 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 // Grouping selector. This component returns a React Select v2 selector with
 // a set of options constructed from a list of basis items, many of which
 // may be coalesced into (i.e., represented by) a single select option.
@@ -66,6 +65,7 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 //
 //    By default, `replaceInvalidValue` is a function that returns the value
 //    of the first enabled option.
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Select from 'react-select';
@@ -76,15 +76,36 @@ import objectId from '../../../debug-utils/object-id';
 import './GroupingSelector.css';
 import { flattenOptions, isValidValue } from '../../../utils/select';
 export default class GroupingSelector extends React.Component {
-  // All props not named here are passed through to the rendered component.
   log(...args) {
     if (this.props.debug) {
       console.log(`GroupingSelector[${this.props.debugValue}]`, ...args);
     }
   }
-
   constructor(props) {
     super(props);
+    // Memoize computation of options list
+    // See https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization
+    // Form the list of base options (without isDisabled property) from the
+    // list of metadata. An option item has the following form:
+    //
+    //  {
+    //    representative: <object>
+    //      The representative value of the option.
+    //    context: [ <object> ]
+    //      The contexts in which the option occurs. A context is a basis item
+    //      from which an equal option representative value is generated.
+    //      (Contexts are often used to determine enabled/disabled status,
+    //      but this function is not concerned with that status.)
+    //    label: <string>
+    //      The label for the option that appears in the selector UI.
+    //  }
+    //
+    // This function is memoized because otherwise it would have to reprocess
+    // the large list of basis items (`props.bases`) into options every time this
+    // component is rendered, which, amongst other cases, is every time a
+    // selection is made. Also, this function is potentially called multiple
+    // times per render, depending on the behaviour of downstream functions
+    // such as `abledOptions` and `props.arrangeOptions`.
     this.baseOptions = memoize((getOptionRepresentative, getOptionLabel, meta) => flow(tap(meta => this.log(`.baseOptions: meta:`, objectId(meta), meta)), map(m => ({
       context: m,
       representative: getOptionRepresentative(m)
@@ -97,17 +118,23 @@ export default class GroupingSelector extends React.Component {
       }
     })), map(option => assign(option, {
       label: getOptionLabel(option)
-    })) // tap(m => this.log(`.baseOptions`, m)),
+    }))
+    // tap(m => this.log(`.baseOptions`, m)),
     )(meta));
+    // Form the list of "abled" (enabled/disabled) options from the list of
+    // metadata. Set `isDisabled` using `props.getOptionIsDisabled`.
     this.abledOptions = memoize((getOptionRepresentative, getOptionLabel, getOptionIsDisabled, meta) => flow(tap(options => {
       this.log(`.abledOptions: meta:`, objectId(meta), meta, 'getOptionIsDisabled:', objectId(getOptionIsDisabled));
       this.log(`.abledOptions: options:`, objectId(options), options);
     }), map(option => assign(option, {
       isDisabled: getOptionIsDisabled(option)
-    })), tap(options => this.log(`.abledOptions: result`, options)))( // Can't curry a memoized function; have to put it into the flow manually
+    })), tap(options => this.log(`.abledOptions: result`, options)))(
+    // Can't curry a memoized function; have to put it into the flow manually
     this.baseOptions(getOptionRepresentative, getOptionLabel, meta)));
     this.log(`.cons: meta:`, objectId(props.bases), props.bases);
-  } // Conditionally replace the provided value with a different value.
+  }
+
+  // Conditionally replace the provided value with a different value.
   // The condition, `this.willReplaceValue`, and the replacement value,
   // `this.valueToUse`, are set in `render`. The value is replaced by
   // calling `props.onChange`. React lifecycle constraints forbid calling
@@ -115,102 +142,86 @@ export default class GroupingSelector extends React.Component {
   // in `componentDidMount` or `componentDidUpdate`, where side effects are
   // permitted.
 
-
   condReplaceValue() {
     if (this.willReplaceValue) {
       this.log(`.condReplaceValue: replacing with option:`, this.valueToUse);
       this.props.onChange(this.valueToUse);
     }
   }
-
   componentDidMount() {
     this.condReplaceValue();
   }
-
   componentDidUpdate(prevProps) {
     this.log(`.cDU: meta:`, objectId(this.props.bases));
     this.log(`.componentDidMount: props.meta ${this.props.bases === prevProps.bases ? '===' : '!=='} prevProps.meta`);
     this.condReplaceValue();
-  } // Memoize computation of options list
-  // See https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#what-about-memoization
-  // Form the list of base options (without isDisabled property) from the
-  // list of metadata. An option item has the following form:
-  //
-  //  {
-  //    representative: <object>
-  //      The representative value of the option.
-  //    context: [ <object> ]
-  //      The contexts in which the option occurs. A context is a basis item
-  //      from which an equal option representative value is generated.
-  //      (Contexts are often used to determine enabled/disabled status,
-  //      but this function is not concerned with that status.)
-  //    label: <string>
-  //      The label for the option that appears in the selector UI.
-  //  }
-  //
-  // This function is memoized because otherwise it would have to reprocess
-  // the large list of basis items (`props.bases`) into options every time this
-  // component is rendered, which, amongst other cases, is every time a
-  // selection is made. Also, this function is potentially called multiple
-  // times per render, depending on the behaviour of downstream functions
-  // such as `abledOptions` and `props.arrangeOptions`.
-
-
+  }
   render() {
     // Generate options for React Select v2 component.
     this.log(`.render: arrangedOptions: meta:`, objectId(this.props.bases), this.props.bases);
     const abledOptions = this.abledOptions(this.props.getOptionRepresentative, this.props.getOptionLabel, this.props.getOptionIsDisabled, this.props.bases);
     const arrangedOptions = this.props.arrangeOptions(abledOptions);
-    this.log(`.render: arrangedOptions: result:`, arrangedOptions); // Replace an invalid value (option).
+    this.log(`.render: arrangedOptions: result:`, arrangedOptions);
+
+    // Replace an invalid value (option).
     //
     // The following two instance properties are picked up in lifecycle hooks
     // `componentDidMount` and `componentDidUpdate`, which call back
     // (via `onChange`) as needed with the replaced value.
     // We cannot call back here, because the React lifecycle requires
     // `render` to be a pure (i.e., without side effects) function.
-
     this.willReplaceValue = isFunction(this.props.replaceInvalidValue) && !isValidValue(arrangedOptions, this.props.value);
     this.valueToUse = this.willReplaceValue ? this.props.replaceInvalidValue(arrangedOptions, this.props.value) : this.props.value;
-    return React.createElement(Select, _extends({
+    return /*#__PURE__*/React.createElement(Select, _extends({
       options: arrangedOptions,
       value: this.valueToUse
     }, omit(GroupingSelector.propsToOmit, this.props)));
   }
-
 }
 GroupingSelector.propTypes = {
   bases: PropTypes.array.isRequired,
   // List of basis items the selector will build its options from.
+
   getOptionRepresentative: PropTypes.func.isRequired,
   // Maps a basis item to the `representative` property of an option.
   // This function can map many basis items to the same representative;
   // GroupingSelector collects all basis items with the same
   // representative into a single option.
+
   getOptionLabel: PropTypes.func,
   // Maps an option to the label (a string) for that option.
+
   getOptionIsDisabled: PropTypes.func,
   // Maps an option to a value for its isDisabled property.
   // Typically makes use of option.context to determine this.
+
   arrangeOptions: PropTypes.func,
   // Arranges options for consumption by Select.
   // This may mean sorting options, grouping options (as provided for
   // by Select), or any other operation(s) that arrange the options
   // for presentation in Select.
+
   replaceInvalidValue: PropTypes.func,
   // Called when `props.value` is not a valid option.
   // Called with list of all options.
   // Must (eventually) return a valid value.
   // Beware: If you always return an invalid value from this, you're screwed.
+
   value: PropTypes.any,
   // The currently selected option.
+
   onChange: PropTypes.func,
   // Called when a different option is selected.
-  debug: PropTypes.bool,
-  debugValue: PropTypes.any // For debugging, what else?
-  // Only props key to this compoonent are declared here.
 
+  debug: PropTypes.bool,
+  debugValue: PropTypes.any
+  // For debugging, what else?
+
+  // Only props key to this compoonent are declared here.
 };
-GroupingSelector.propsToOmit = concat( // keys(GroupingSelector.propTypes),
+// All props not named here are passed through to the rendered component.
+GroupingSelector.propsToOmit = concat(
+// keys(GroupingSelector.propTypes),
 // Insanely, when the above code is exported and imported into an different
 // package, it fails (the list of keys is empty). Therefore this ...
 ['bases', 'getOptionRepresentative', 'getOptionLabel', 'getOptionIsDisabled', 'arrangeOptions', 'replaceInvalidValue', 'debug', 'debugValue'], ['options']);
@@ -224,7 +235,8 @@ GroupingSelector.defaultProps = {
     const firstEnabledOption = find({
       isDisabled: false
     }, flattenOptions(options));
-    console.log(`GroupingSelector[...].replaceInvalidValue: firstEnabledOption:`, firstEnabledOption); // Prevent infinite update loop: If there is no enabled option and
+    console.log(`GroupingSelector[...].replaceInvalidValue: firstEnabledOption:`, firstEnabledOption);
+    // Prevent infinite update loop: If there is no enabled option and
     // if the previous value was also undefined, return `null`.
     // This interrupts the case where the options list repeatedly does not
     // contain any enabled option, which does occur transiently in several
@@ -233,11 +245,9 @@ GroupingSelector.defaultProps = {
     // we would have to wait for more than one update cycle to get a list
     // of options containing an enabled option, but this works and it
     // definitely prevents a known problem.
-
     if (isUndefined(firstEnabledOption) && isUndefined(value)) {
       return null;
     }
-
     return firstEnabledOption;
   },
   onChange: noop,
