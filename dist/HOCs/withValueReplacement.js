@@ -1,5 +1,4 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 // Higher-order function that returns a Higher Order Component that adds
 // invalid-value replacement to a typical controlled component with props
 // `value` and `onChange` (e.g., most UI controls such as dropdown selectors).
@@ -52,60 +51,58 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 // Note: for greater flexibility, `withValueReplacement` could accept arguments
 // naming the `value` and `onChange` props expected by the base component.
 // But that is an unnecessary complication at this point.
+
 // TODO: Move to pcic-react-components
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import isFunction from 'lodash/fp/isFunction';
 export default function withValueReplacement() {
   return function (BaseComponent) {
-    var _class, _temp;
-
-    return _temp = _class = class extends React.Component {
+    var _Class;
+    return _Class = class extends React.Component {
       // Conditionally replace the provided value with a different value.
       // The value is replaced by calling `props.onChange`. React lifecycle
       // constraints forbid calling `onChange` (triggering a state update)
       // in `render`; instead it must be done in `componentDidMount` or
       // `componentDidUpdate`, where side effects are permitted.
+
       componentDidMount() {
         this.condReplaceValue();
       }
-
       componentDidUpdate() {
         this.condReplaceValue();
       }
-
       condReplaceValue() {
         const {
           isInvalidValue,
           replaceInvalidValue
         } = this.props;
-
         if (isFunction(replaceInvalidValue) && isInvalidValue(this.props.value)) {
           this.props.onChange(this.props.replaceInvalidValue(this.props.value));
         }
       }
-
       render() {
         const {
           isInvalidValue,
           replaceInvalidValue,
           ...passThroughProps
         } = this.props;
-        return React.createElement(BaseComponent, _extends({
+        return /*#__PURE__*/React.createElement(BaseComponent, _extends({
           value: this.props.value
         }, passThroughProps));
       }
-
-    }, _class.propTypes = {
+    }, _Class.propTypes = {
       value: PropTypes.any,
       onChange: PropTypes.func,
       isInvalidValue: PropTypes.func,
       // Returns a boolean indicating whether the value passed in is invalid.
-      replaceInvalidValue: PropTypes.func // Called when `props.value` is not a valid value, according to
+
+      replaceInvalidValue: PropTypes.func
+      // Called when `props.value` is not a valid value, according to
       // `props.isInvalidValue`.
       // Must (eventually) return a valid value.
       // Beware: If you always return an invalid value, you're screwed.
-
-    }, _temp;
+    }, _Class;
   };
 }

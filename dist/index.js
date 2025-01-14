@@ -7,10 +7,12 @@ export { default as SelectWithValueReplacement } from './components/select/Selec
 export { default as SimpleConstraintGroupingSelector } from './components/select/SimpleConstraintGroupingSelector';
 export { default as TimeOfYearSelector } from './components/select/TimeOfYearSelector';
 export { default as TimePeriodSelector } from './components/select/TimePeriodSelector';
-export { default as VariableSelector } from './components/select/VariableSelector'; // HOCs
+export { default as VariableSelector } from './components/select/VariableSelector';
 
-export { default as withValueReplacement } from './HOCs/withValueReplacement'; // Utilities
+// HOCs
+export { default as withValueReplacement } from './HOCs/withValueReplacement';
 
+// Utilities
 import * as _fp from './utils/fp';
 export { _fp as fp };
 import * as _select from './utils/select';

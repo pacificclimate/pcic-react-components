@@ -4,5 +4,7 @@ import Template from '../VariableSelector';
 import { noop } from 'underscore';
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(React.createElement(Template, null), div);
+  ReactDOM.render(/*#__PURE__*/React.createElement(Template, {
+    bases: []
+  }), div);
 });
