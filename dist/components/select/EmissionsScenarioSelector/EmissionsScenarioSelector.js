@@ -7,6 +7,7 @@ const formattedPart = {
   rcp85: 'RCP 8.5',
   ssp126: 'SSP 1-2.6',
   ssp245: 'SSP 2-4.5',
+  ssp370: 'SSP 3-7.0',
   ssp585: 'SSP 5-8.5'
 };
 const formatPart = part => {
