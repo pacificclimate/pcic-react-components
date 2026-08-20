@@ -13,7 +13,7 @@
 # the size of the image by about an order of magnitude and reduce the attack surface of
 # the image as well.
 
-FROM node:16
+FROM node:24-bookworm-slim
 
 WORKDIR /app
 RUN chown node /app
@@ -25,8 +25,11 @@ ARG PUBLIC_URL
 ENV PUBLIC_URL $PUBLIC_URL
 ADD --chown=node:node  . /app
 
-RUN npm install --quiet && \
-    npm install -g serve
+RUN npm install --global npm@12 && \
+    test "$(node --version | cut -d. -f1 | tr -d v)" = "24" && \
+    test "$(npm --version | cut -d. -f1)" = "12" && \
+    npm ci --quiet && \
+    npm install --global serve
 
 EXPOSE 3000
 

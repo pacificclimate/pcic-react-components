@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "reinstall": "rm -rf ./node_modules; npm install",
+    "reinstall": "npm ci",
     "start": "react-scripts start",
     "build-examples": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -42,5 +42,13 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "engines": {
+    "node": "24.x",
+    "npm": "12.x"
+  },
+  "allowScripts": {
+    "core-js@3.40.0": true,
+    "core-js-pure@3.40.0": true
+  }
 }
