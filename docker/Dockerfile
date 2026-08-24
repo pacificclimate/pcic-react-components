@@ -7,7 +7,7 @@
 #
 # docker build --build-arg REACT_APP_VERSION="$(./generate-commitish.sh)" -t <tag> .
 
-# At this moment, Node.js 10.16 LTS is recommended for most users.
+# Node.js 24 and npm 12 are required by this project.
 #
 # In future, as we scale up, we may want to use an Alpine base image, which would reduce
 # the size of the image by about an order of magnitude and reduce the attack surface of
@@ -28,11 +28,11 @@ ADD --chown=node:node  . /app
 RUN npm install --global npm@12 && \
     test "$(node --version | cut -d. -f1 | tr -d v)" = "24" && \
     test "$(npm --version | cut -d. -f1)" = "12" && \
-    npm ci --quiet && \
     npm install --global serve
 
 EXPOSE 3000
 
 USER node
+RUN npm ci --quiet
 RUN npm run build:app
 ENTRYPOINT ./docker/entrypoint.sh
