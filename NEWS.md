@@ -1,5 +1,11 @@
 # News / Release Notes
 
+## 3.4.0
+
+_2026-Aug-26_
+
+- Node 24 npm 12 security policy (#30)
+
 ## 3.3.0
 
 _2025-Sep-17_
